@@ -1,0 +1,11 @@
+.env
+docs/
+examples/
+coverage.xml
+nosetests.xml
+.pytest_cache/
+**/__pycache__/
+**/.venv/
+**/venv/
+*.bak
+.vscode/

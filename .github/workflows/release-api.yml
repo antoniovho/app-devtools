@@ -69,11 +69,11 @@ jobs:
             yq -r \
               --arg api "$API" \
               '.apis[]
-               | select(
-                   .id == $api and
-                   ."api-spec-type" == "rest"
-                 )
-               | ."definition-path"' \
+              | select(
+                  .id == $api and
+                  ."api-spec-type" == "rest"
+                )
+              | ."definition-path"' \
               "$CATALOG"
           )"
 

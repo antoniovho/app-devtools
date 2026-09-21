@@ -4,14 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       api:
-        description: API to release
-        required: true
-        type: choice
-        options:
-          - test-service
-
-      version:
-        description: Version to release, for example 0.1.0
+        description: API id to release, for example test-service
         required: true
         type: string
 
@@ -19,8 +12,11 @@ permissions:
   contents: write
 
 concurrency:
-  group: release-api-${{ inputs.api }}-${{ inputs.version }}
+  group: release-api-${{ inputs.api }}
   cancel-in-progress: false
+
+env:
+  REDOCLY_VERSION: "1.34.3"
 
 jobs:
   release:
@@ -39,97 +35,249 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Validate version
+      - name: Install yq
+        shell: bash
         env:
-          VERSION: ${{ inputs.version }}
+          YQ_VERSION: "v4.47.2"
         run: |
-          if [[ ! "$VERSION" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
-            echo "Invalid version: $VERSION"
-            exit 1
-          fi
+          set -euo pipefail
 
-      - name: Define release metadata
-        id: metadata
+          sudo wget \
+            -qO /usr/local/bin/yq \
+            "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64"
+
+          sudo chmod +x /usr/local/bin/yq
+
+          yq --version
+
+      - name: Resolve API
+        id: api
+        shell: bash
         env:
           API: ${{ inputs.api }}
-          VERSION: ${{ inputs.version }}
         run: |
-          case "$API" in
-            test-service) ROOT="apis/test-service/rest/openapi-rest.yml" ;;
-            *) echo "Unsupported API: $API"; exit 1 ;;
-          esac
+          set -euo pipefail
 
-          echo "tag=${API}-api-v${VERSION}" >> "$GITHUB_OUTPUT"
-          echo "artifact=${API}-api-${VERSION}.yml" >> "$GITHUB_OUTPUT"
-          echo "root=$ROOT" >> "$GITHUB_OUTPUT"
+          CATALOG="apis/metadata.yml"
 
-      - name: Check info.version
-        env:
-          VERSION: ${{ inputs.version }}
-          ROOT: ${{ steps.metadata.outputs.root }}
-        run: |
-          INFO_VERSION="$(awk '
-            /^info:/ { in_info=1; next }
-            in_info && /^[^[:space:]]/ { exit }
-            in_info && $1 == "version:" {
-              value=$2
-              gsub(/[",]/, "", value)
-              print value
-              exit
-            }
-          ' "$ROOT")"
-
-          if [[ "$INFO_VERSION" != "$VERSION" ]]; then
-            echo "info.version=$INFO_VERSION does not match version=$VERSION"
+          if [[ ! -f "$CATALOG" ]]; then
+            echo "API catalog not found: $CATALOG"
             exit 1
           fi
 
-      - name: Ensure tag does not exist
+          DEFINITION_PATH="$(
+            yq -r \
+              --arg api "$API" \
+              '.apis[]
+               | select(
+                   .id == $api and
+                   ."api-spec-type" == "rest"
+                 )
+               | ."definition-path"' \
+              "$CATALOG"
+          )"
+
+          if [[ -z "$DEFINITION_PATH" || "$DEFINITION_PATH" == "null" ]]; then
+            echo "Unknown REST API: $API"
+            exit 1
+          fi
+
+          API_DIR="apis/$DEFINITION_PATH"
+          METADATA="$API_DIR/metadata.yml"
+
+          if [[ ! -d "$API_DIR" ]]; then
+            echo "API directory not found: $API_DIR"
+            exit 1
+          fi
+
+          if [[ ! -f "$METADATA" ]]; then
+            echo "API metadata not found: $METADATA"
+            exit 1
+          fi
+
+          VERSION="$(yq -r '.api.version // ""' "$METADATA")"
+          DEFINITION="$(yq -r '.api.definition // ""' "$METADATA")"
+
+          if [[ -z "$VERSION" ]]; then
+            echo "api.version is missing in $METADATA"
+            exit 1
+          fi
+
+          if [[ ! "$VERSION" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo "Invalid SemVer version: $VERSION"
+            exit 1
+          fi
+
+          if [[ -z "$DEFINITION" ]]; then
+            echo "api.definition is missing in $METADATA"
+            exit 1
+          fi
+
+          ROOT="$API_DIR/$DEFINITION"
+
+          if [[ ! -f "$ROOT" ]]; then
+            echo "OpenAPI definition not found: $ROOT"
+            exit 1
+          fi
+
+          TAG="${API}-api-v${VERSION}"
+          ARTIFACT="${API}-api-${VERSION}.yml"
+
+          echo "definition_path=$DEFINITION_PATH" >> "$GITHUB_OUTPUT"
+          echo "metadata=$METADATA" >> "$GITHUB_OUTPUT"
+          echo "root=$ROOT" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "artifact=$ARTIFACT" >> "$GITHUB_OUTPUT"
+
+          echo "API:        $API"
+          echo "Version:    $VERSION"
+          echo "Definition: $ROOT"
+          echo "Tag:        $TAG"
+          echo "Artifact:   $ARTIFACT"
+
+      - name: Check OpenAPI version
+        shell: bash
         env:
-          TAG: ${{ steps.metadata.outputs.tag }}
+          VERSION: ${{ steps.api.outputs.version }}
+          ROOT: ${{ steps.api.outputs.root }}
         run: |
+          set -euo pipefail
+
+          INFO_VERSION="$(yq -r '.info.version // ""' "$ROOT")"
+
+          if [[ -z "$INFO_VERSION" ]]; then
+            echo "OpenAPI info.version is missing in $ROOT"
+            exit 1
+          fi
+
+          if [[ "$INFO_VERSION" != "$VERSION" ]]; then
+            echo "Version mismatch:"
+            echo "metadata.yml api.version: $VERSION"
+            echo "OpenAPI info.version:     $INFO_VERSION"
+            exit 1
+          fi
+
+          echo "Version consistency check passed: $VERSION"
+
+      - name: Ensure release does not already exist
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.api.outputs.tag }}
+        run: |
+          set -euo pipefail
+
           if git show-ref --tags --verify --quiet "refs/tags/$TAG"; then
-            echo "Tag already exists locally: $TAG"
+            echo "Tag already exists: $TAG"
             exit 1
           fi
 
           if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
-            echo "Tag already exists remotely: $TAG"
+            echo "Remote tag already exists: $TAG"
             exit 1
           fi
 
-      - name: Lint OpenAPI
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "GitHub Release already exists: $TAG"
+            exit 1
+          fi
+
+      - name: Check version against previous releases
+        shell: bash
         env:
-          ROOT: ${{ steps.metadata.outputs.root }}
+          API: ${{ inputs.api }}
+          VERSION: ${{ steps.api.outputs.version }}
         run: |
-          npx --yes @redocly/cli@1.34.3 lint "$ROOT"
+          set -euo pipefail
+
+          git fetch --tags --force
+
+          LATEST_VERSION="$(
+            git tag --list "${API}-api-v*" \
+              | sed "s/^${API}-api-v//" \
+              | grep -E '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$' \
+              | sort -V \
+              | tail -n 1
+          )"
+
+          if [[ -z "$LATEST_VERSION" ]]; then
+            echo "No previous release found for $API."
+            echo "This will be the first release: $VERSION"
+            exit 0
+          fi
+
+          echo "Latest published version: $LATEST_VERSION"
+          echo "Candidate version:        $VERSION"
+
+          HIGHEST="$(
+            printf '%s\n%s\n' "$LATEST_VERSION" "$VERSION" \
+              | sort -V \
+              | tail -n 1
+          )"
+
+          if [[ "$VERSION" == "$LATEST_VERSION" ]]; then
+            echo "Version $VERSION has already been published."
+            exit 1
+          fi
+
+          if [[ "$HIGHEST" != "$VERSION" ]]; then
+            echo "Version $VERSION is older than latest published version $LATEST_VERSION."
+            exit 1
+          fi
+
+          echo "Version progression check passed."
+
+      - name: Lint OpenAPI
+        shell: bash
+        env:
+          ROOT: ${{ steps.api.outputs.root }}
+        run: |
+          set -euo pipefail
+
+          npx --yes "@redocly/cli@$REDOCLY_VERSION" lint "$ROOT"
 
       - name: Bundle OpenAPI
+        shell: bash
         env:
-          ARTIFACT: ${{ steps.metadata.outputs.artifact }}
-          ROOT: ${{ steps.metadata.outputs.root }}
+          ARTIFACT: ${{ steps.api.outputs.artifact }}
+          ROOT: ${{ steps.api.outputs.root }}
         run: |
+          set -euo pipefail
+
           mkdir -p dist
 
-          npx --yes @redocly/cli@1.34.3 bundle "$ROOT" \
-            --output "dist/$ARTIFACT" \
-            --component-renaming-conflicts-severity=error
+          npx --yes "@redocly/cli@$REDOCLY_VERSION" bundle "$ROOT" \
+            --output "dist/$ARTIFACT"
 
           test -s "dist/$ARTIFACT"
 
+          echo "Bundle generated:"
+          ls -lh "dist/$ARTIFACT"
+
       - name: Create tag
+        shell: bash
         env:
-          TAG: ${{ steps.metadata.outputs.tag }}
+          TAG: ${{ steps.api.outputs.tag }}
         run: |
-          git tag --annotate "$TAG" "$(git rev-parse HEAD)" --message "Release $TAG"
+          set -euo pipefail
+
+          git tag \
+            --annotate "$TAG" \
+            "$(git rev-parse HEAD)" \
+            --message "Release $TAG"
+
           git push origin "$TAG"
 
       - name: Create GitHub Release
+        shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ steps.metadata.outputs.tag }}
-          ARTIFACT: ${{ steps.metadata.outputs.artifact }}
+          TAG: ${{ steps.api.outputs.tag }}
+          ARTIFACT: ${{ steps.api.outputs.artifact }}
         run: |
+          set -euo pipefail
+
           gh release create "$TAG" \
             "dist/$ARTIFACT" \
             --title "$TAG" \

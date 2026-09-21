@@ -9,3 +9,5 @@ nosetests.xml
 **/venv/
 *.bak
 .vscode/
+# Windows Mark of the Web metadata
+*:Zone.Identifier

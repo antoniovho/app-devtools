@@ -87,6 +87,39 @@ components:
           minItems: 1
           items:
             $ref: '#/components/schemas/Action'
+    PreconditionVersionReference:
+      title: PreconditionVersionReference
+      description: Reference to an exact immutable precondition version.
+      type: object
+      additionalProperties: false
+      required:
+        - id
+      properties:
+        id:
+          $ref: ../common/components.yml#/components/schemas/UUID
+    PreconditionReference:
+      title: PreconditionReference
+      description: Reference to an exact immutable precondition version with its business identity.
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - preconditionKey
+        - version
+      properties:
+        id:
+          $ref: ../common/components.yml#/components/schemas/UUID
+        preconditionKey:
+          type: string
+          description: Stable business key of the precondition.
+          minLength: 1
+          maxLength: 100
+          example: customer-is-authenticated
+        version:
+          type: integer
+          description: Monotonically increasing version number.
+          minimum: 1
+          example: 1
     TestCase:
       title: TestCase
       description: Immutable version of an authored test case.
@@ -105,6 +138,7 @@ components:
         - priority
         - status
         - definition
+        - preconditions
         - timeoutSeconds
         - createdAt
         - createdBy
@@ -179,6 +213,14 @@ components:
           example: DRAFT
         definition:
           $ref: '#/components/schemas/Definition'
+        preconditions:
+          type: array
+          description: >
+            Ordered immutable precondition versions required before test case
+            execution.
+          items:
+            $ref: '#/components/schemas/PreconditionReference'
+          example: []
         timeoutSeconds:
           type: integer
           description: Maximum execution time in seconds.
@@ -272,6 +314,16 @@ components:
           example: HIGH
         definition:
           $ref: '#/components/schemas/Definition'
+        preconditions:
+          type: array
+          description: >
+            Ordered immutable precondition versions required before test case
+            execution. Preconditions are evaluated in the order in which they
+            appear.
+          items:
+            $ref: '#/components/schemas/PreconditionVersionReference'
+          default: []
+          example: []
         timeoutSeconds:
           type: integer
           description: Maximum execution time in seconds.
@@ -401,7 +453,7 @@ components:
         - preconditionKey
         - name
         - description
-        - validationAction
+        - validationDefinition
       properties:
         projectKey:
           $ref: ../projects/components.yml#/components/schemas/ProjectKey
@@ -421,7 +473,7 @@ components:
           type: string
           description: Behavior validated before execution.
           example: Checks that the customer session is valid
-        validationAction:
+        validationDefinition:
           $ref: '#/components/schemas/Definition'
         metadata:
           type: object

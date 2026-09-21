@@ -67,10 +67,14 @@ not update Test Service domain state.
 Run from the repository root:
 
 ```bash
-npx --yes @redocly/cli@1.34.3 lint test-service
-npx --yes @redocly/cli@1.34.3 bundle test-service \
-  --output /tmp/test-service-api.yml
-test -s /tmp/test-service-api.yml
+npx --yes @redocly/cli@1.34.20 lint apis/test-service/rest/openapi-rest.yml
+
+npx --yes @redocly/cli@1.34.20 bundle \
+  apis/test-service/rest/openapi-rest.yml \
+  --output /tmp/test-service-api-0.1.0.yml
+
+openapi-generator-cli validate -i /tmp/test-service-api-0.1.0.yml
+
 ```
 
 The bundle is a single OpenAPI YAML document with resolved references. It is not

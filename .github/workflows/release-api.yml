@@ -250,7 +250,7 @@ jobs:
           mkdir -p dist
 
           npx --yes "@redocly/cli@$REDOCLY_VERSION" bundle "$ROOT" \
-            --output "dist/$ARTIFACT"
+            --output "dist/$ARTIFACT" \
             --component-renaming-conflicts-severity=error
 
           test -s "dist/$ARTIFACT"

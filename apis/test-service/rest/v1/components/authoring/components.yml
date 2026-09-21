@@ -1,0 +1,454 @@
+---
+components:
+  parameters:
+    TestCaseId:
+      name: testCaseId
+      in: path
+      required: true
+      description: UUID of the test case version.
+      schema:
+        $ref: ../common/components.yml#/components/schemas/UUID
+    PreconditionId:
+      name: preconditionId
+      in: path
+      required: true
+      description: UUID of the precondition version.
+      schema:
+        $ref: ../common/components.yml#/components/schemas/UUID
+
+  schemas:
+    Action:
+      title: Action
+      description: Executable action within a test definition.
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - type
+        - config
+      properties:
+        id:
+          type: string
+          description: Stable identifier of the action within the definition.
+          minLength: 1
+          maxLength: 100
+          example: login
+        type:
+          type: string
+          description: Action type resolved by the Action Registry.
+          minLength: 1
+          maxLength: 100
+          example: HTTP_REQUEST
+        source:
+          type: string
+          description: Optional action source or provider.
+          minLength: 1
+          maxLength: 100
+          example: http
+        config:
+          type: object
+          description: Configuration validated according to the registered action type.
+          additionalProperties: true
+          example:
+            method: GET
+    Definition:
+      title: Definition
+      description: Executable definition containing variables and ordered actions.
+      type: object
+      additionalProperties: false
+      required:
+        - schemaVersion
+        - variables
+        - actions
+      properties:
+        schemaVersion:
+          type: string
+          description: Version of the test definition schema interpreted by the compiler.
+          enum:
+            - "1.0"
+          example: "1.0"
+        variables:
+          type: object
+          description: Runtime variables available to actions.
+          additionalProperties:
+            type: string
+          example:
+            baseUrl: https://api.example.com
+        actions:
+          description: >
+            Ordered actions executed by the test runner.
+            Action identifiers MUST be unique within the definition.
+          example:
+            - id: login
+              type: HTTP_REQUEST
+              config:
+                method: GET
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/Action'
+    TestCase:
+      title: TestCase
+      description: Immutable version of an authored test case.
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - project
+        - testKey
+        - version
+        - name
+        - summary
+        - objective
+        - testType
+        - testLevel
+        - priority
+        - status
+        - definition
+        - timeoutSeconds
+        - createdAt
+        - createdBy
+      properties:
+        id:
+          $ref: ../common/components.yml#/components/schemas/UUID
+        project:
+          $ref: ../projects/components.yml#/components/schemas/ProjectReference
+        testKey:
+          type: string
+          description: Stable business key of the test case.
+          minLength: 1
+          maxLength: 100
+          example: checkout-happy-path
+        version:
+          type: integer
+          description: Monotonically increasing version number.
+          minimum: 1
+          example: 1
+        name:
+          type: string
+          description: Human-readable test case name.
+          minLength: 1
+          maxLength: 255
+          example: Checkout happy path
+        summary:
+          type: string
+          description: Short summary of the scenario.
+          minLength: 1
+          maxLength: 1000
+          example: Customer completes checkout
+        objective:
+          type: string
+          description: Expected objective of the test.
+          minLength: 1
+          maxLength: 2000
+          example: Verify order creation
+        testType:
+          type: string
+          description: Test execution modality.
+          enum:
+            - AUTOMATED
+            - MANUAL
+          example: AUTOMATED
+        testLevel:
+          type: string
+          description: Test level in the quality model.
+          enum:
+            - FUNCTIONAL
+            - ERROR
+            - INTEGRATION
+            - PERFORMANCE
+            - SECURITY
+            - STRESS
+          example: FUNCTIONAL
+        priority:
+          type: string
+          description: Business priority of the test.
+          enum:
+            - LOW
+            - MEDIUM
+            - HIGH
+            - CRITICAL
+          example: HIGH
+        status:
+          type: string
+          description: Lifecycle status of this version.
+          enum:
+            - DRAFT
+            - ACTIVE
+            - DEPRECATED
+          example: DRAFT
+        definition:
+          $ref: '#/components/schemas/Definition'
+        timeoutSeconds:
+          type: integer
+          description: Maximum execution time in seconds.
+          minimum: 1
+          example: 60
+        createdAt:
+          type: string
+          description: Creation timestamp in UTC.
+          format: date-time
+          example: "2026-01-15T10:30:00Z"
+        createdBy:
+          type: string
+          description: Identity that created the version.
+          minLength: 1
+          maxLength: 255
+          example: user@example.com
+        metadata:
+          type: object
+          description: Additional domain metadata.
+          additionalProperties: true
+          example:
+            team: payments
+    CreateTestCaseRequest:
+      title: CreateTestCaseRequest
+      description: Payload used to create an immutable test case version.
+      type: object
+      additionalProperties: false
+      required:
+        - projectKey
+        - testKey
+        - name
+        - summary
+        - objective
+        - testType
+        - testLevel
+        - priority
+        - definition
+        - timeoutSeconds
+      properties:
+        projectKey:
+          $ref: ../projects/components.yml#/components/schemas/ProjectKey
+        testKey:
+          type: string
+          description: Stable business key of the test case.
+          minLength: 1
+          maxLength: 100
+          example: checkout-happy-path
+        name:
+          type: string
+          description: Human-readable test case name.
+          minLength: 1
+          maxLength: 255
+          example: Checkout happy path
+        summary:
+          type: string
+          description: Short summary of the scenario.
+          minLength: 1
+          maxLength: 1000
+          example: Customer completes checkout
+        objective:
+          type: string
+          description: Expected objective of the test.
+          minLength: 1
+          maxLength: 2000
+          example: Verify order creation
+        testType:
+          type: string
+          description: Test execution modality.
+          enum:
+            - AUTOMATED
+          example: AUTOMATED
+        testLevel:
+          type: string
+          description: Test level in the quality model.
+          enum:
+            - FUNCTIONAL
+            - ERROR
+            - INTEGRATION
+            - PERFORMANCE
+            - SECURITY
+            - STRESS
+          example: FUNCTIONAL
+        priority:
+          type: string
+          description: Business priority of the test.
+          enum:
+            - LOW
+            - MEDIUM
+            - HIGH
+            - CRITICAL
+          example: HIGH
+        definition:
+          $ref: '#/components/schemas/Definition'
+        timeoutSeconds:
+          type: integer
+          description: Maximum execution time in seconds.
+          minimum: 1
+          example: 60
+        metadata:
+          type: object
+          description: Additional domain metadata.
+          additionalProperties: true
+          example:
+            team: payments
+    TestCaseListResponse:
+      title: TestCaseListResponse
+      description: Paginated collection of test case versions.
+      type: object
+      required:
+        - data
+        - pagination
+      properties:
+        data:
+          type: array
+          description: Test case versions in the current page.
+          items:
+            $ref: '#/components/schemas/TestCase'
+          maxItems: 100
+        pagination:
+          $ref: ../common/components.yml#/components/schemas/Pagination
+      additionalProperties: false
+      example:
+        data: []
+        pagination:
+          offset: 0
+          limit: 20
+          total: 0
+    TestCaseVersionListResponse:
+      title: TestCaseVersionListResponse
+      allOf:
+        - $ref: '#/components/schemas/TestCaseListResponse'
+    ActionRequest:
+      title: ActionRequest
+      description: Optional reason supplied for a lifecycle action.
+      type: object
+      additionalProperties: false
+      properties:
+        reason:
+          type: string
+          description: Reason for the requested lifecycle action.
+          minLength: 1
+          maxLength: 1000
+          example: Approved after review
+    Precondition:
+      title: Precondition
+      description: Immutable version of a validation precondition.
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - project
+        - preconditionKey
+        - version
+        - name
+        - description
+        - validationDefinition
+        - status
+        - createdAt
+        - createdBy
+      properties:
+        id:
+          $ref: ../common/components.yml#/components/schemas/UUID
+        project:
+          $ref: ../projects/components.yml#/components/schemas/ProjectReference
+        preconditionKey:
+          type: string
+          description: Stable business key of the precondition.
+          minLength: 1
+          maxLength: 100
+          example: customer-is-authenticated
+        version:
+          type: integer
+          description: Monotonically increasing version number.
+          minimum: 1
+          example: 1
+        name:
+          type: string
+          description: Human-readable precondition name.
+          minLength: 1
+          maxLength: 255
+          example: Customer is authenticated
+        description:
+          type: string
+          description: Behavior validated before execution.
+          example: Checks that the customer session is valid
+        validationDefinition:
+          $ref: '#/components/schemas/Definition'
+        status:
+          type: string
+          description: Lifecycle status of this version.
+          enum:
+            - DRAFT
+            - ACTIVE
+            - DEPRECATED
+          example: ACTIVE
+        createdAt:
+          type: string
+          description: Creation timestamp in UTC.
+          format: date-time
+          example: "2026-01-15T10:30:00Z"
+        createdBy:
+          type: string
+          description: Identity that created the version.
+          minLength: 1
+          maxLength: 255
+          example: user@example.com
+        metadata:
+          type: object
+          description: Additional domain metadata.
+          additionalProperties: true
+          example:
+            team: payments
+    CreatePreconditionRequest:
+      title: CreatePreconditionRequest
+      description: Payload used to create an immutable precondition version.
+      type: object
+      additionalProperties: false
+      required:
+        - projectKey
+        - preconditionKey
+        - name
+        - description
+        - validationAction
+      properties:
+        projectKey:
+          $ref: ../projects/components.yml#/components/schemas/ProjectKey
+        preconditionKey:
+          type: string
+          description: Stable business key of the precondition.
+          minLength: 1
+          maxLength: 100
+          example: customer-is-authenticated
+        name:
+          type: string
+          description: Human-readable precondition name.
+          minLength: 1
+          maxLength: 255
+          example: Customer is authenticated
+        description:
+          type: string
+          description: Behavior validated before execution.
+          example: Checks that the customer session is valid
+        validationAction:
+          $ref: '#/components/schemas/Definition'
+        metadata:
+          type: object
+          description: Additional domain metadata.
+          additionalProperties: true
+          example:
+            team: payments
+    PreconditionListResponse:
+      title: PreconditionListResponse
+      description: Paginated collection of precondition versions.
+      type: object
+      required:
+        - data
+        - pagination
+      properties:
+        data:
+          type: array
+          description: Precondition versions in the current page.
+          items:
+            $ref: '#/components/schemas/Precondition'
+          maxItems: 100
+        pagination:
+          $ref: ../common/components.yml#/components/schemas/Pagination
+      additionalProperties: false
+      example:
+        data: []
+        pagination:
+          offset: 0
+          limit: 20
+          total: 0

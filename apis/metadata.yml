@@ -1,0 +1,9 @@
+---
+pipeline:
+  version: 1
+
+apis:
+  - id: test-service
+    name: "Test Service"
+    api-spec-type: rest
+    definition-path: "test-service/rest"

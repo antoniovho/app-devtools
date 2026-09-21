@@ -1,0 +1,36 @@
+post:
+  operationId: deprecateTestSet
+  tags:
+    - Composition
+  summary: Deprecate a test set version
+  description: Marks a test set version as deprecated.
+  parameters:
+    - $ref: ../../components/composition/components.yml#/components/parameters/TestSetId
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: ../../components/authoring/components.yml#/components/schemas/ActionRequest
+  responses:
+    "200":
+      description: Deprecated
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/composition/components.yml#/components/schemas/TestSet
+    "400":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/BadRequest400
+    "401":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    "403":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Forbidden403
+    "404":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
+    "409":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Conflict409
+    "422":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
+    "500":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500
+    "503":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/ServiceUnavailable503

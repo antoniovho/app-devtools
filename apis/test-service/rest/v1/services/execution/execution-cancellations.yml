@@ -1,0 +1,35 @@
+post:
+  operationId: cancelExecution
+  tags:
+    - Execution
+  summary: Cancel an execution
+  description: Requests cancellation of an execution that has not reached a terminal state.
+  parameters:
+    - name: executionId
+      in: path
+      required: true
+      schema:
+        $ref: ../../components/common/components.yml#/components/schemas/UUID
+  responses:
+    "200":
+      description: Cancelled
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/execution/components.yml#/components/schemas/Execution
+    "400":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/BadRequest400
+    "401":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    "403":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Forbidden403
+    "404":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
+    "409":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Conflict409
+    "422":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
+    "500":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500
+    "503":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/ServiceUnavailable503

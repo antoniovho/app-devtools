@@ -1,0 +1,107 @@
+---
+openapi: 3.0.3
+info:
+  title: Test Service
+  description: API for authoring immutable test definitions, composing test plans, executing validated plans, and publishing read-only projections to an external testing viewer.
+  version: 0.1.0
+  contact:
+    name: Antonio Velasco Horcajada
+    email: avelasco.horcajada@knowmadmood.com
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+tags:
+  - name: Authoring
+    description: Versioned test cases and preconditions.
+  - name: Composition
+    description: Versioned test sets and plans.
+  - name: Projects
+    description: Shared project catalog and administrative lifecycle.
+  - name: Execution
+    description: Executions and immutable test results.
+  - name: Viewer Integration
+    description: Outbound publication and drift detection.
+paths:
+  /v1/projects:
+    $ref: v1/services/projects/projects.yml
+  /v1/projects/{projectKey}:
+    $ref: v1/services/projects/project-detail.yml
+  /v1/test-cases:
+    $ref: v1/services/authoring/test-cases.yml
+  /v1/test-cases/{testCaseId}:
+    $ref: v1/services/authoring/test-case-detail.yml
+  /v1/test-cases/{testCaseId}/versions:
+    $ref: v1/services/authoring/test-case-versions.yml
+  /v1/test-cases/{testCaseId}/activations:
+    $ref: v1/services/authoring/test-case-activations.yml
+  /v1/test-cases/{testCaseId}/deprecations:
+    $ref: v1/services/authoring/test-case-deprecations.yml
+  /v1/preconditions:
+    $ref: v1/services/authoring/preconditions.yml
+  /v1/preconditions/{preconditionId}:
+    $ref: v1/services/authoring/precondition-detail.yml
+  /v1/preconditions/{preconditionId}/versions:
+    $ref: v1/services/authoring/precondition-versions.yml
+  /v1/preconditions/{preconditionId}/activations:
+    $ref: v1/services/authoring/precondition-activations.yml
+  /v1/preconditions/{preconditionId}/deprecations:
+    $ref: v1/services/authoring/precondition-deprecations.yml
+  /v1/test-sets:
+    $ref: v1/services/composition/test-sets.yml
+  /v1/test-sets/{testSetId}:
+    $ref: v1/services/composition/test-set-detail.yml
+  /v1/test-sets/{testSetId}/versions:
+    $ref: v1/services/composition/test-set-versions.yml
+  /v1/test-sets/{testSetId}/activations:
+    $ref: v1/services/composition/test-set-activations.yml
+  /v1/test-sets/{testSetId}/deprecations:
+    $ref: v1/services/composition/test-set-deprecations.yml
+  /v1/test-plans:
+    $ref: v1/services/composition/test-plans.yml
+  /v1/test-plans/{testPlanId}:
+    $ref: v1/services/composition/test-plan-detail.yml
+  /v1/test-plans/{testPlanId}/versions:
+    $ref: v1/services/composition/test-plan-versions.yml
+  /v1/test-plans/{testPlanId}/activations:
+    $ref: v1/services/composition/test-plan-activations.yml
+  /v1/test-plans/{testPlanId}/deprecations:
+    $ref: v1/services/composition/test-plan-deprecations.yml
+  /v1/environments:
+    $ref: v1/services/execution/environments.yml
+  /v1/environments/{environmentId}:
+    $ref: v1/services/execution/environment-detail.yml
+  /v1/environments/{environmentId}/activations:
+    $ref: v1/services/execution/environment-activations.yml
+  /v1/environments/{environmentId}/deactivations:
+    $ref: v1/services/execution/environment-deactivations.yml
+  /v1/executions:
+    $ref: v1/services/execution/executions.yml
+  /v1/executions/{executionId}:
+    $ref: v1/services/execution/execution-detail.yml
+  /v1/executions/{executionId}/cancellations:
+    $ref: v1/services/execution/execution-cancellations.yml
+  /v1/executions/{executionId}/results:
+    $ref: v1/services/execution/execution-results.yml
+  /v1/executions/{executionId}/results/{testResultId}:
+    $ref: v1/services/execution/execution-result-detail.yml
+  /v1/executions/{executionId}/results/{testResultId}/actions:
+    $ref: v1/services/execution/execution-result-actions.yml
+  /v1/executions/{executionId}/results/{testResultId}/artifacts:
+    $ref: v1/services/execution/execution-result-artifacts.yml
+  /v1/viewer/publications:
+    $ref: v1/services/viewer/publications.yml
+  /v1/viewer/drift-checks:
+    $ref: v1/services/viewer/drift-checks.yml
+  /v1/viewer/sync-records:
+    $ref: v1/services/viewer/sync-records.yml
+  /v1/viewer/drift-events:
+    $ref: v1/services/viewer/drift-events.yml
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Authentication using a bearer token.
+security:
+  - bearerAuth: []

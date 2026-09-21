@@ -1,0 +1,13 @@
+api:
+  name: Test Service
+  tags:
+    - authoring
+    - composition
+    - execution
+    - viewer-integration
+  status: experimental
+  version: 0.1.0
+  type: application
+  visibility: PUBLIC
+  definition: openapi-rest.yml
+  scope: public

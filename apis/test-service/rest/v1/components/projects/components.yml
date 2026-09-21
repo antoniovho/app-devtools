@@ -1,0 +1,116 @@
+---
+components:
+  schemas:
+    ProjectKey:
+      title: ProjectKey
+      description: Stable key used to identify a project in the Project Catalog.
+      type: string
+      minLength: 2
+      maxLength: 20
+      example: IAG
+    ProjectReference:
+      title: ProjectReference
+      description: Project that owns test artifacts and maps to an external project when published.
+      type: object
+      additionalProperties: false
+      required:
+        - key
+        - name
+      properties:
+        key:
+          $ref: '#/components/schemas/ProjectKey'
+        name:
+          type: string
+          description: Human-readable project name.
+          minLength: 1
+          maxLength: 255
+          example: AI Gateway
+    Project:
+      title: Project
+      description: Project Catalog entry used to scope all test resources.
+      type: object
+      additionalProperties: false
+      required:
+        - key
+        - name
+        - status
+        - createdAt
+        - createdBy
+      properties:
+        key:
+          $ref: '#/components/schemas/ProjectKey'
+        name:
+          type: string
+          description: Human-readable project name managed by Test Service.
+          minLength: 1
+          maxLength: 255
+          example: AI Gateway
+        status:
+          type: string
+          description: Project lifecycle status. DELETED is a logical deletion state.
+          enum:
+            - ACTIVE
+            - DELETED
+          example: ACTIVE
+        createdAt:
+          type: string
+          format: date-time
+          description: UTC timestamp when the project was created.
+          example: "2026-01-15T10:30:00Z"
+        createdBy:
+          type: string
+          description: Authenticated administrator that created the project.
+          minLength: 1
+          maxLength: 255
+          example: admin@example.com
+        deletedAt:
+          type: string
+          format: date-time
+          description: UTC timestamp when the project was logically deleted.
+          example: "2026-09-18T10:30:00Z"
+        deletedBy:
+          type: string
+          description: Authenticated administrator that logically deleted the project.
+          minLength: 1
+          maxLength: 255
+          example: admin@example.com
+    CreateProjectRequest:
+      title: CreateProjectRequest
+      description: Administrative request to register a Jira project in the local Project Catalog.
+      type: object
+      additionalProperties: false
+      required:
+        - key
+        - name
+      properties:
+        key:
+          $ref: '#/components/schemas/ProjectKey'
+        name:
+          type: string
+          description: Local human-readable name for the project.
+          minLength: 1
+          maxLength: 255
+          example: AI Gateway
+    ProjectListResponse:
+      title: ProjectListResponse
+      description: Paginated collection of active projects in the local Project Catalog.
+      type: object
+      additionalProperties: false
+      required:
+        - data
+        - pagination
+      properties:
+        data:
+          type: array
+          description: Active projects in the requested page.
+          items:
+            $ref: '#/components/schemas/Project'
+          maxItems: 100
+        pagination:
+          $ref: ../common/components.yml#/components/schemas/Pagination
+      example:
+        data: []
+        pagination:
+          offset: 0
+          limit: 20
+          total: 0

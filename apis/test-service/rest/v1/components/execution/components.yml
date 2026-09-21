@@ -1,0 +1,541 @@
+---
+components:
+  parameters:
+    EnvironmentId:
+      name: environmentId
+      in: path
+      required: true
+      description: UUID of the environment.
+      schema:
+        $ref: ../common/components.yml#/components/schemas/UUID
+    ExecutionId:
+      name: executionId
+      in: path
+      required: true
+      description: UUID of the execution.
+      schema:
+        $ref: ../common/components.yml#/components/schemas/UUID
+    TestResultId:
+      name: testResultId
+      in: path
+      required: true
+      description: UUID of the test result.
+      schema:
+        $ref: ../common/components.yml#/components/schemas/UUID
+  schemas:
+    Environment:
+      title: Environment
+      description: Target environment configuration used by test executions.
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - environmentKey
+        - name
+        - status
+        - createdAt
+        - createdBy
+      properties:
+        id:
+          $ref: ../common/components.yml#/components/schemas/UUID
+        environmentKey:
+          type: string
+          description: Stable business key of the environment.
+          minLength: 1
+          maxLength: 100
+          example: staging-eu
+        name:
+          type: string
+          description: Human-readable environment name.
+          minLength: 1
+          maxLength: 255
+          example: Staging Europe
+        description:
+          type: string
+          description: Purpose of the environment.
+          example: Shared staging environment
+        status:
+          type: string
+          description: Lifecycle status of the environment.
+          enum:
+            - ACTIVE
+            - INACTIVE
+            - DEPRECATED
+          example: ACTIVE
+        configuration:
+          type: object
+          description: Environment-specific runtime configuration.
+          additionalProperties: true
+          example:
+            region: eu-west-1
+        createdAt:
+          type: string
+          description: Creation timestamp in UTC.
+          format: date-time
+          example: "2026-01-15T10:30:00Z"
+        createdBy:
+          type: string
+          description: Identity that created the environment.
+          minLength: 1
+          maxLength: 255
+          example: user@example.com
+    CreateEnvironmentRequest:
+      title: CreateEnvironmentRequest
+      description: Payload used to create an execution environment.
+      type: object
+      additionalProperties: false
+      required:
+        - environmentKey
+        - name
+      properties:
+        environmentKey:
+          type: string
+          description: Stable business key of the environment.
+          minLength: 1
+          maxLength: 100
+          example: staging-eu
+        name:
+          type: string
+          description: Human-readable environment name.
+          minLength: 1
+          maxLength: 255
+          example: Staging Europe
+        description:
+          type: string
+          description: Purpose of the environment.
+          example: Shared staging environment
+        configuration:
+          type: object
+          description: Environment-specific runtime configuration.
+          additionalProperties: true
+          example:
+            region: eu-west-1
+    EnvironmentListResponse:
+      title: EnvironmentListResponse
+      description: Paginated collection of execution environments.
+      type: object
+      required:
+        - data
+        - pagination
+      properties:
+        data:
+          type: array
+          description: Environments in the current page.
+          items:
+            $ref: '#/components/schemas/Environment'
+          maxItems: 100
+        pagination:
+          $ref: ../common/components.yml#/components/schemas/Pagination
+      additionalProperties: false
+      example:
+        data: []
+        pagination:
+          offset: 0
+          limit: 20
+          total: 0
+    Execution:
+      title: Execution
+      description: Execution instance created from a test plan and environment.
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - project
+        - testPlanId
+        - environmentId
+        - triggerType
+        - status
+        - createdAt
+      properties:
+        id:
+          $ref: ../common/components.yml#/components/schemas/UUID
+        project:
+          $ref: ../projects/components.yml#/components/schemas/ProjectReference
+        testPlanId:
+          description: UUID of the immutable test plan version executed.
+          allOf:
+            - $ref: ../common/components.yml#/components/schemas/UUID
+        environmentId:
+          $ref: ../common/components.yml#/components/schemas/UUID
+        triggerType:
+          type: string
+          description: Source that started the execution.
+          enum:
+            - MANUAL
+            - API
+            - CI
+            - SCHEDULE
+          example: CI
+        triggeredBy:
+          type: string
+          description: Identity or system that started the execution.
+          minLength: 1
+          maxLength: 255
+          example: github-actions
+        status:
+          type: string
+          description: Current execution status.
+          enum:
+            - CREATED
+            - RUNNING
+            - PASSED
+            - FAILED
+            - PARTIALLY_FAILED
+            - CANCELLED
+            - ERROR
+          example: RUNNING
+        runnerVersion:
+          type: string
+          description: Version of the execution runner.
+          minLength: 1
+          maxLength: 100
+          example: 2.4.1
+        startedAt:
+          type: string
+          description: Execution start timestamp in UTC.
+          format: date-time
+          example: "2026-01-15T10:30:05Z"
+        finishedAt:
+          type: string
+          description: Execution completion timestamp in UTC.
+          format: date-time
+          example: "2026-01-15T10:32:05Z"
+        durationMs:
+          type: integer
+          description: Execution duration in milliseconds.
+          minimum: 0
+          example: 120000
+        createdAt:
+          type: string
+          description: Creation timestamp in UTC.
+          format: date-time
+          example: "2026-01-15T10:30:00Z"
+    CreateExecutionRequest:
+      title: CreateExecutionRequest
+      description: Payload used to start an execution.
+      type: object
+      additionalProperties: false
+      required:
+        - testPlanId
+        - environmentId
+        - triggerType
+      properties:
+        testPlanId:
+          $ref: ../common/components.yml#/components/schemas/UUID
+        environmentId:
+          $ref: ../common/components.yml#/components/schemas/UUID
+        triggerType:
+          type: string
+          description: Source that started the execution.
+          enum:
+            - MANUAL
+            - API
+            - CI
+            - SCHEDULE
+          example: API
+        triggeredBy:
+          type: string
+          description: Identity or system starting the execution.
+          minLength: 1
+          maxLength: 255
+          example: release-service
+    ExecutionListResponse:
+      title: ExecutionListResponse
+      description: Paginated collection of executions.
+      type: object
+      required:
+        - data
+        - pagination
+      properties:
+        data:
+          type: array
+          description: Executions in the current page.
+          items:
+            $ref: '#/components/schemas/Execution'
+          maxItems: 100
+        pagination:
+          $ref: ../common/components.yml#/components/schemas/Pagination
+      additionalProperties: false
+      example:
+        data: []
+        pagination:
+          offset: 0
+          limit: 20
+          total: 0
+    TestResult:
+      title: TestResult
+      description: Immutable result produced by executing one test case.
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - executionId
+        - testCaseId
+        - status
+        - createdAt
+      properties:
+        id:
+          $ref: ../common/components.yml#/components/schemas/UUID
+        executionId:
+          $ref: ../common/components.yml#/components/schemas/UUID
+        testCaseId:
+          description: UUID of the immutable test case version executed.
+          allOf:
+            - $ref: ../common/components.yml#/components/schemas/UUID
+        status:
+          type: string
+          description: Final status of the test case execution.
+          enum:
+            - PASSED
+            - FAILED
+            - ERROR
+            - BLOCKED
+            - SKIPPED
+          example: PASSED
+        startedAt:
+          type: string
+          description: Test start timestamp in UTC.
+          format: date-time
+          example: "2026-01-15T10:30:05Z"
+        finishedAt:
+          type: string
+          description: Test completion timestamp in UTC.
+          format: date-time
+          example: "2026-01-15T10:30:25Z"
+        durationMs:
+          type: integer
+          description: Test duration in milliseconds.
+          minimum: 0
+          example: 20000
+        errorCode:
+          type: string
+          description: Machine-readable failure code.
+          minLength: 1
+          maxLength: 100
+          example: ASSERTION_FAILED
+        errorMessage:
+          type: string
+          description: Human-readable failure message.
+          example: Expected status 200 but received 500
+        createdAt:
+          type: string
+          description: Creation timestamp in UTC.
+          format: date-time
+          example: "2026-01-15T10:30:25Z"
+    TestResultListResponse:
+      title: TestResultListResponse
+      description: Paginated collection of test results.
+      type: object
+      required:
+        - data
+        - pagination
+      properties:
+        data:
+          type: array
+          description: Test results in the current page.
+          items:
+            $ref: '#/components/schemas/TestResult'
+          maxItems: 100
+        pagination:
+          $ref: ../common/components.yml#/components/schemas/Pagination
+      additionalProperties: false
+      example:
+        data: []
+        pagination:
+          offset: 0
+          limit: 20
+          total: 0
+    ActionResult:
+      title: ActionResult
+      description: >
+        Result produced by executing one action of a test definition. Expected,
+        actual, and output contain small structured values; large payloads,
+        logs, traces, streams, and binary content belong in TestResultArtifact.
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - testResultId
+        - actionId
+        - actionType
+        - status
+      properties:
+        id:
+          $ref: ../common/components.yml#/components/schemas/UUID
+        testResultId:
+          $ref: ../common/components.yml#/components/schemas/UUID
+        actionId:
+          type: string
+          description: Identifier of the action in the executed test definition.
+          minLength: 1
+          maxLength: 100
+          example: login
+        actionType:
+          type: string
+          description: Executed action type resolved by the Action Registry.
+          minLength: 1
+          maxLength: 100
+          example: HTTP_REQUEST
+        status:
+          type: string
+          description: Final status of the action execution.
+          enum:
+            - PASSED
+            - FAILED
+            - ERROR
+            - BLOCKED
+            - SKIPPED
+          example: PASSED
+        startedAt:
+          type: string
+          description: Action start timestamp in UTC.
+          format: date-time
+          example: "2026-01-15T10:30:05Z"
+        finishedAt:
+          type: string
+          description: Action completion timestamp in UTC.
+          format: date-time
+          example: "2026-01-15T10:30:10Z"
+        durationMs:
+          type: integer
+          description: Action execution duration in milliseconds.
+          minimum: 0
+          example: 5000
+        expected:
+          type: object
+          description: Expected result or condition validated by the action; keep structured values small and store large payloads as artifacts.
+          additionalProperties: true
+          example:
+            statusCode: 200
+        actual:
+          type: object
+          description: Actual structured result observed during action execution; keep structured values small and store large payloads as artifacts.
+          additionalProperties: true
+          example:
+            statusCode: 200
+        output:
+          type: object
+          description: Structured values produced by the action independently of validation; keep values small and store large payloads as artifacts.
+          additionalProperties: true
+          example:
+            orderId: ORD-123
+        errorCode:
+          type: string
+          description: Machine-readable action failure code.
+          minLength: 1
+          maxLength: 100
+          example: TIMEOUT
+        errorMessage:
+          type: string
+          description: Human-readable action failure message.
+          example: Request timed out
+    ActionResultListResponse:
+      title: ActionResultListResponse
+      description: Paginated collection of action execution results.
+      type: object
+      additionalProperties: false
+      required:
+        - data
+        - pagination
+      properties:
+        data:
+          type: array
+          description: Action results in the current page.
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/ActionResult'
+        pagination:
+          $ref: ../common/components.yml#/components/schemas/Pagination
+      example:
+        data: []
+        pagination:
+          offset: 0
+          limit: 20
+          total: 0
+    TestResultArtifact:
+      title: TestResultArtifact
+      description: Artifact generated while executing a test result.
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - testResultId
+        - artifactType
+        - storageType
+        - createdAt
+      properties:
+        id:
+          $ref: ../common/components.yml#/components/schemas/UUID
+        testResultId:
+          $ref: ../common/components.yml#/components/schemas/UUID
+        actionResultId:
+          allOf:
+            - $ref: ../common/components.yml#/components/schemas/UUID
+          description: Action result associated with the artifact, when applicable.
+        artifactType:
+          type: string
+          description: Kind of generated artifact.
+          enum:
+            - REQUEST
+            - RESPONSE
+            - SSE_TRACE
+            - LOG
+            - OTHER
+          example: RESPONSE
+        storageType:
+          type: string
+          description: Storage backend containing the artifact.
+          enum:
+            - DB
+            - OBJECT_STORAGE
+          example: OBJECT_STORAGE
+        storageUri:
+          type: string
+          description: URI used to retrieve the artifact.
+          format: uri
+          example: https://storage.example.com/artifacts/abc
+        contentHash:
+          type: string
+          description: Hash of the artifact content.
+          minLength: 1
+          maxLength: 128
+          example: sha256:abc123
+        sizeBytes:
+          type: integer
+          description: Artifact size in bytes.
+          minimum: 0
+          example: 2048
+        mimeType:
+          type: string
+          description: Artifact media type.
+          minLength: 1
+          maxLength: 255
+          example: application/json
+        createdAt:
+          type: string
+          description: Creation timestamp in UTC.
+          format: date-time
+          example: "2026-01-15T10:30:25Z"
+    TestResultArtifactListResponse:
+      title: TestResultArtifactListResponse
+      description: Paginated collection of test result artifacts.
+      type: object
+      required:
+        - data
+        - pagination
+      properties:
+        data:
+          type: array
+          description: Test result artifacts in the current page.
+          items:
+            $ref: '#/components/schemas/TestResultArtifact'
+          maxItems: 100
+        pagination:
+          $ref: ../common/components.yml#/components/schemas/Pagination
+      additionalProperties: false
+      example:
+        data: []
+        pagination:
+          offset: 0
+          limit: 20
+          total: 0

@@ -1,0 +1,76 @@
+get:
+  operationId: listTestPlans
+  tags:
+    - Composition
+  summary: List test plan snapshots
+  description: Returns a paginated list of versioned test plan snapshots.
+  parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/projectKey
+    - $ref: ../../components/common/components.yml#/components/parameters/status
+    - $ref: ../../components/common/components.yml#/components/parameters/offset
+    - $ref: ../../components/common/components.yml#/components/parameters/limit
+    - $ref: ../../components/common/components.yml#/components/parameters/sortBy
+    - $ref: ../../components/common/components.yml#/components/parameters/order
+  responses:
+    "200":
+      description: Test plans
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/composition/components.yml#/components/schemas/TestPlanListResponse
+    "400":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/BadRequest400
+    "401":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    "403":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Forbidden403
+    "409":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Conflict409
+    "422":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
+    "500":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500
+    "503":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/ServiceUnavailable503
+post:
+  operationId: createTestPlan
+  tags:
+    - Composition
+  summary: Create a test plan snapshot
+  description: Creates an immutable test plan snapshot with sets, tests, and exclusions.
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../components/composition/components.yml#/components/schemas/CreateTestPlanRequest
+  responses:
+    "201":
+      description: Created
+      headers:
+        Location:
+          schema:
+            type: string
+            format: uri-reference
+          description: URI reference of the created resource.
+          required: true
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/composition/components.yml#/components/schemas/TestPlan
+    "400":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/BadRequest400
+    "401":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    "403":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Forbidden403
+    "404":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
+    "409":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Conflict409
+    "422":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
+    "500":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500
+    "503":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/ServiceUnavailable503

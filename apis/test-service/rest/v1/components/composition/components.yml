@@ -1,0 +1,338 @@
+---
+components:
+  parameters:
+    TestSetId:
+      name: testSetId
+      in: path
+      required: true
+      description: UUID of the immutable test set version.
+      schema:
+        $ref: ../common/components.yml#/components/schemas/UUID
+    TestPlanId:
+      name: testPlanId
+      in: path
+      required: true
+      description: UUID of the immutable test plan version.
+      schema:
+        $ref: ../common/components.yml#/components/schemas/UUID
+  schemas:
+    TestSet:
+      title: TestSet
+      description: Immutable version of a composed test set.
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - project
+        - setKey
+        - version
+        - name
+        - status
+        - items
+        - createdAt
+        - createdBy
+      properties:
+        id:
+          $ref: ../common/components.yml#/components/schemas/UUID
+        project:
+          $ref: ../projects/components.yml#/components/schemas/ProjectReference
+        setKey:
+          type: string
+          description: Stable business key of the test set.
+          minLength: 1
+          maxLength: 100
+          example: checkout-regression
+        version:
+          type: integer
+          description: Monotonically increasing version number.
+          minimum: 1
+          example: 1
+        name:
+          type: string
+          description: Human-readable test set name.
+          minLength: 1
+          maxLength: 255
+          example: Checkout regression
+        description:
+          type: string
+          description: Purpose of the test set.
+          example: Regression tests for checkout
+        status:
+          type: string
+          description: Lifecycle status of this version.
+          enum:
+            - DRAFT
+            - ACTIVE
+            - DEPRECATED
+          example: DRAFT
+        items:
+          type: array
+          description: Ordered test case versions belonging to this test set. Array order determines execution order.
+          minItems: 1
+          uniqueItems: true
+          items:
+            $ref: ../common/components.yml#/components/schemas/UUID
+        createdAt:
+          type: string
+          description: Creation timestamp in UTC.
+          format: date-time
+          example: "2026-01-15T10:30:00Z"
+        createdBy:
+          type: string
+          description: Identity that created the test set.
+          minLength: 1
+          maxLength: 255
+          example: user@example.com
+    CreateTestSetRequest:
+      title: CreateTestSetRequest
+      description: Payload used to create an immutable test set version.
+      type: object
+      additionalProperties: false
+      required:
+        - projectKey
+        - setKey
+        - name
+        - items
+      properties:
+        projectKey:
+          $ref: ../projects/components.yml#/components/schemas/ProjectKey
+        setKey:
+          type: string
+          description: Stable business key of the test set.
+          minLength: 1
+          maxLength: 100
+          example: checkout-regression
+        name:
+          type: string
+          description: Human-readable test set name.
+          minLength: 1
+          maxLength: 255
+          example: Checkout regression
+        description:
+          type: string
+          description: Purpose of the test set.
+          example: Regression tests for checkout
+        items:
+          type: array
+          description: Ordered test case versions belonging to this test set. Array order determines execution order.
+          minItems: 1
+          uniqueItems: true
+          items:
+            $ref: ../common/components.yml#/components/schemas/UUID
+    TestSetListResponse:
+      title: TestSetListResponse
+      description: Paginated collection of test set versions.
+      type: object
+      required:
+        - data
+        - pagination
+      properties:
+        data:
+          type: array
+          description: Test set versions in the current page.
+          items:
+            $ref: '#/components/schemas/TestSet'
+          maxItems: 100
+        pagination:
+          $ref: ../common/components.yml#/components/schemas/Pagination
+      additionalProperties: false
+      example:
+        data: []
+        pagination:
+          offset: 0
+          limit: 20
+          total: 0
+    TestPlan:
+      title: TestPlan
+      description: Immutable version of an executable test plan.
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - project
+        - planKey
+        - version
+        - name
+        - status
+        - executionMode
+        - timeoutSeconds
+        - createdAt
+        - createdBy
+      properties:
+        id:
+          $ref: ../common/components.yml#/components/schemas/UUID
+        project:
+          $ref: ../projects/components.yml#/components/schemas/ProjectReference
+        planKey:
+          type: string
+          description: Stable business key of the test plan.
+          minLength: 1
+          maxLength: 100
+          example: checkout-nightly
+        version:
+          type: integer
+          description: Monotonically increasing version number.
+          minimum: 1
+          example: 1
+        name:
+          type: string
+          description: Human-readable test plan name.
+          minLength: 1
+          maxLength: 255
+          example: Checkout nightly
+        description:
+          type: string
+          description: Purpose of the test plan.
+          example: Nightly checkout validation
+        status:
+          type: string
+          description: Lifecycle status of this version.
+          enum:
+            - DRAFT
+            - ACTIVE
+            - DEPRECATED
+          example: ACTIVE
+        executionMode:
+          type: string
+          description: Scheduling mode for plan items.
+          enum:
+            - SEQUENTIAL
+            - PARALLEL
+          example: SEQUENTIAL
+        maxParallelism:
+          type: integer
+          description: Maximum number of concurrent executions.
+          minimum: 1
+          example: 4
+        timeoutSeconds:
+          type: integer
+          description: Maximum plan execution time in seconds.
+          minimum: 1
+          example: 900
+        testSetIds:
+          type: array
+          description: Test set versions included in the plan.
+          uniqueItems: true
+          items:
+            $ref: ../common/components.yml#/components/schemas/UUID
+          example:
+            - 550e8400-e29b-41d4-a716-446655440000
+        testCaseIds:
+          type: array
+          description: Individual test case versions included in the plan.
+          uniqueItems: true
+          items:
+            $ref: ../common/components.yml#/components/schemas/UUID
+          example:
+            - 550e8400-e29b-41d4-a716-446655440000
+        exclusions:
+          type: array
+          description: Test case versions excluded from execution.
+          uniqueItems: true
+          items:
+            $ref: ../common/components.yml#/components/schemas/UUID
+          example: []
+        createdAt:
+          type: string
+          description: Creation timestamp in UTC.
+          format: date-time
+          example: "2026-01-15T10:30:00Z"
+        createdBy:
+          type: string
+          description: Identity that created the version.
+          minLength: 1
+          maxLength: 255
+          example: user@example.com
+    CreateTestPlanRequest:
+      title: CreateTestPlanRequest
+      description: Payload used to create an immutable test plan version.
+      type: object
+      additionalProperties: false
+      required:
+        - projectKey
+        - planKey
+        - name
+        - executionMode
+        - timeoutSeconds
+      properties:
+        projectKey:
+          $ref: ../projects/components.yml#/components/schemas/ProjectKey
+        planKey:
+          type: string
+          description: Stable business key of the test plan.
+          minLength: 1
+          maxLength: 100
+          example: checkout-nightly
+        name:
+          type: string
+          description: Human-readable test plan name.
+          minLength: 1
+          maxLength: 255
+          example: Checkout nightly
+        description:
+          type: string
+          description: Purpose of the test plan.
+          example: Nightly checkout validation
+        executionMode:
+          type: string
+          description: Scheduling mode for plan items.
+          enum:
+            - SEQUENTIAL
+            - PARALLEL
+          example: SEQUENTIAL
+        maxParallelism:
+          type: integer
+          description: Maximum number of concurrent executions.
+          minimum: 1
+          example: 4
+        timeoutSeconds:
+          type: integer
+          description: Maximum plan execution time in seconds.
+          minimum: 1
+          example: 900
+        testSetIds:
+          type: array
+          description: Test set versions included in the plan.
+          uniqueItems: true
+          items:
+            $ref: ../common/components.yml#/components/schemas/UUID
+          example:
+            - 550e8400-e29b-41d4-a716-446655440000
+        testCaseIds:
+          type: array
+          description: Individual test case versions included in the plan.
+          uniqueItems: true
+          items:
+            $ref: ../common/components.yml#/components/schemas/UUID
+          example:
+            - 550e8400-e29b-41d4-a716-446655440000
+        exclusions:
+          type: array
+          description: Test case versions excluded from execution.
+          uniqueItems: true
+          items:
+            $ref: ../common/components.yml#/components/schemas/UUID
+          example: []
+    TestPlanListResponse:
+      title: TestPlanListResponse
+      description: Paginated collection of test plan versions.
+      type: object
+      required:
+        - data
+        - pagination
+      properties:
+        data:
+          type: array
+          description: Test plan versions in the current page.
+          items:
+            $ref: '#/components/schemas/TestPlan'
+          maxItems: 100
+        pagination:
+          $ref: ../common/components.yml#/components/schemas/Pagination
+      additionalProperties: false
+      example:
+        data: []
+        pagination:
+          offset: 0
+          limit: 20
+          total: 0

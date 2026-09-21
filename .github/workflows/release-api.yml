@@ -66,15 +66,14 @@ jobs:
           fi
 
           DEFINITION_PATH="$(
-            yq -r \
-              --arg api "$API" \
-              '.apis[]
+            yq -r '
+              .apis[]
               | select(
-                  .id == $api and
+                  .id == strenv(API) and
                   ."api-spec-type" == "rest"
                 )
-              | ."definition-path"' \
-              "$CATALOG"
+              | ."definition-path"
+            ' "$CATALOG"
           )"
 
           if [[ -z "$DEFINITION_PATH" || "$DEFINITION_PATH" == "null" ]]; then

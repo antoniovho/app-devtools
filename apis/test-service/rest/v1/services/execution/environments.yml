@@ -1,0 +1,74 @@
+get:
+  operationId: listEnvironments
+  tags:
+    - Execution
+  summary: List execution environments
+  description: Returns a paginated list of configured execution environments without secret values.
+  parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/offset
+    - $ref: ../../components/common/components.yml#/components/parameters/limit
+  responses:
+    "200":
+      description: Environments
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/execution/components.yml#/components/schemas/EnvironmentListResponse
+    "400":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/BadRequest400
+    "401":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    "403":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Forbidden403
+    "404":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
+    "409":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Conflict409
+    "422":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
+    "500":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500
+    "503":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/ServiceUnavailable503
+post:
+  operationId: createEnvironment
+  tags:
+    - Execution
+  summary: Create an environment metadata resource
+  description: Creates execution environment metadata without persisting resolved secrets.
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../components/execution/components.yml#/components/schemas/CreateEnvironmentRequest
+  responses:
+    "201":
+      description: Created
+      headers:
+        Location:
+          schema:
+            type: string
+            format: uri-reference
+          description: URI reference of the created resource.
+          required: true
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/execution/components.yml#/components/schemas/Environment
+    "400":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/BadRequest400
+    "401":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    "403":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Forbidden403
+    "404":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
+    "409":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Conflict409
+    "422":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
+    "500":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500
+    "503":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/ServiceUnavailable503

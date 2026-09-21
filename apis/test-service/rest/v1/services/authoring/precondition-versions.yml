@@ -1,0 +1,75 @@
+get:
+  operationId: listPreconditionVersions
+  tags:
+    - Authoring
+  summary: List versions of a precondition
+  description: Returns all immutable versions associated with a precondition key.
+  parameters:
+    - $ref: ../../components/authoring/components.yml#/components/parameters/PreconditionId
+    - $ref: ../../components/common/components.yml#/components/parameters/offset
+    - $ref: ../../components/common/components.yml#/components/parameters/limit
+  responses:
+    "200":
+      description: Precondition versions
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/authoring/components.yml#/components/schemas/PreconditionListResponse
+    "400":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/BadRequest400
+    "401":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    "403":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Forbidden403
+    "409":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Conflict409
+    "422":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
+    "500":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500
+    "503":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/ServiceUnavailable503
+post:
+  operationId: createPreconditionVersion
+  tags:
+    - Authoring
+  summary: Create a precondition version
+  description: Creates a new immutable version for the selected precondition key.
+  parameters:
+    - $ref: ../../components/authoring/components.yml#/components/parameters/PreconditionId
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../components/authoring/components.yml#/components/schemas/CreatePreconditionRequest
+  responses:
+    "201":
+      description: Created
+      headers:
+        Location:
+          schema:
+            type: string
+            format: uri-reference
+          description: URI reference of the created resource.
+          required: true
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/authoring/components.yml#/components/schemas/Precondition
+    "400":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/BadRequest400
+    "401":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    "403":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Forbidden403
+    "404":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
+    "409":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Conflict409
+    "422":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
+    "500":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500
+    "503":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/ServiceUnavailable503

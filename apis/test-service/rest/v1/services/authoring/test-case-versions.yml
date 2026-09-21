@@ -1,0 +1,77 @@
+get:
+  operationId: listTestCaseVersions
+  tags:
+    - Authoring
+  summary: List versions of a test case key
+  description: Returns all immutable versions associated with a test case key.
+  parameters:
+    - $ref: ../../components/authoring/components.yml#/components/parameters/TestCaseId
+    - $ref: ../../components/common/components.yml#/components/parameters/offset
+    - $ref: ../../components/common/components.yml#/components/parameters/limit
+  responses:
+    "200":
+      description: Versions
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/authoring/components.yml#/components/schemas/TestCaseVersionListResponse
+    "400":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/BadRequest400
+    "401":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    "403":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Forbidden403
+    "404":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
+    "409":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Conflict409
+    "422":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
+    "500":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500
+    "503":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/ServiceUnavailable503
+post:
+  operationId: createTestCaseVersion
+  tags:
+    - Authoring
+  summary: Create a new immutable test case version
+  description: Creates a new version without modifying any existing test case version.
+  parameters:
+    - $ref: ../../components/authoring/components.yml#/components/parameters/TestCaseId
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../components/authoring/components.yml#/components/schemas/CreateTestCaseRequest
+  responses:
+    "201":
+      description: Created
+      headers:
+        Location:
+          schema:
+            type: string
+            format: uri-reference
+          description: URI reference of the created resource.
+          required: true
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/authoring/components.yml#/components/schemas/TestCase
+    "400":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/BadRequest400
+    "401":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    "403":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Forbidden403
+    "404":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
+    "409":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Conflict409
+    "422":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
+    "500":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500
+    "503":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/ServiceUnavailable503

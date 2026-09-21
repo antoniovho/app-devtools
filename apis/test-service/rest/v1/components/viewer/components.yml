@@ -1,0 +1,202 @@
+---
+components:
+  schemas:
+    ViewerSyncRecord:
+      title: ViewerSyncRecord
+      description: >
+        Read-only synchronization state between a logical domain entity and
+        its stable representation in the external viewer. For versioned
+        entities, projectedVersionId identifies the immutable domain version
+        currently projected to the viewer.
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - entityType
+        - entityKey
+        - projectedVersionId
+        - viewerType
+        - externalEntityKey
+        - syncStatus
+        - createdAt
+      properties:
+        id:
+          $ref: ../common/components.yml#/components/schemas/UUID
+        entityType:
+          type: string
+          description: Type of domain entity represented in the external viewer.
+          enum:
+            - TEST_CASE
+            - PRECONDITION
+            - TEST_SET
+            - TEST_PLAN
+          example: TEST_CASE
+        entityKey:
+          type: string
+          description: >
+            Stable business key of the logical domain entity represented in the
+            external viewer. This key remains unchanged across versions.
+          minLength: 1
+          maxLength: 100
+          example: checkout-happy-path
+        projectedVersionId:
+          description: >
+            UUID of the immutable domain version currently projected to the
+            external viewer.
+          allOf:
+            - $ref: ../common/components.yml#/components/schemas/UUID
+        viewerType:
+          type: string
+          description: Type of external viewer containing the projection.
+          enum:
+            - XRAY
+          example: XRAY
+        externalEntityKey:
+          type: string
+          description: >
+            Stable identifier of the projected entity in the external viewer.
+            Publishing a new domain version updates the same external entity instead
+            of creating a new one.
+          minLength: 1
+          maxLength: 255
+          example: TEST-123
+        externalEntityId:
+          type: string
+          description: Optional technical identifier assigned by the external viewer.
+          minLength: 1
+          maxLength: 255
+          example: "123456"
+        syncStatus:
+          type: string
+          description: Current synchronization status of the viewer projection.
+          enum:
+            - PENDING
+            - SYNCED
+            - ERROR
+            - DRIFT_DETECTED
+          example: SYNCED
+        lastSyncedAt:
+          type: string
+          description: Last successful synchronization timestamp in UTC.
+          format: date-time
+          example: "2026-01-15T10:31:00Z"
+        lastCheckedAt:
+          type: string
+          description: Last drift check timestamp in UTC.
+          format: date-time
+          example: "2026-01-15T10:32:00Z"
+        createdAt:
+          type: string
+          description: Projection record creation timestamp in UTC.
+          format: date-time
+          example: "2026-01-15T10:30:00Z"
+
+    ViewerSyncRecordListResponse:
+      title: ViewerSyncRecordListResponse
+      description: Paginated collection of viewer synchronization records.
+      type: object
+      additionalProperties: false
+      required:
+        - data
+        - pagination
+      properties:
+        data:
+          type: array
+          description: Synchronization records in the current page.
+          maxItems: 100
+          items:
+            $ref: "#/components/schemas/ViewerSyncRecord"
+        pagination:
+          $ref: ../common/components.yml#/components/schemas/Pagination
+      example:
+        data: []
+        pagination:
+          offset: 0
+          limit: 20
+          total: 0
+
+    DriftEvent:
+      title: DriftEvent
+      description: >
+        Immutable record of a difference detected between the expected domain
+        projection and its representation in the external viewer.
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - syncRecordId
+        - projectedVersionId
+        - detectedAt
+        - driftType
+        - notificationStatus
+      properties:
+        id:
+          $ref: ../common/components.yml#/components/schemas/UUID
+        syncRecordId:
+          description: >
+            UUID of the viewer synchronization record for which the drift was detected.
+          allOf:
+            - $ref: ../common/components.yml#/components/schemas/UUID
+        projectedVersionId:
+          description: >
+            UUID of the immutable domain version expected to be represented
+            in the external viewer when the drift was detected.
+          allOf:
+            - $ref: ../common/components.yml#/components/schemas/UUID
+        detectedAt:
+          type: string
+          description: Drift detection timestamp in UTC.
+          format: date-time
+          example: "2026-01-15T10:32:00Z"
+        driftType:
+          type: string
+          description: Type of difference detected in the external viewer.
+          enum:
+            - MODIFIED
+            - DELETED
+            - MISSING
+          example: MODIFIED
+        notificationStatus:
+          type: string
+          description: Delivery status of the drift notification.
+          enum:
+            - PENDING
+            - SENT
+            - ERROR
+          example: PENDING
+        details:
+          type: object
+          description: >
+            Structured details describing the detected difference. This field
+            must not contain secrets or large payloads.
+          additionalProperties: true
+          example:
+            field: status
+            expected: Active
+            actual: Draft
+
+    DriftEventListResponse:
+      title: DriftEventListResponse
+      description: Paginated collection of drift events.
+      type: object
+      additionalProperties: false
+      required:
+        - data
+        - pagination
+      properties:
+        data:
+          type: array
+          description: Drift events in the current page.
+          maxItems: 100
+          items:
+            $ref: "#/components/schemas/DriftEvent"
+
+        pagination:
+          $ref: ../common/components.yml#/components/schemas/Pagination
+
+      example:
+        data: []
+        pagination:
+          offset: 0
+          limit: 20
+          total: 0

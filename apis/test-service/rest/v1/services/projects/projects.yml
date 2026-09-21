@@ -1,0 +1,76 @@
+get:
+  operationId: listProjects
+  tags:
+    - Projects
+  summary: List projects
+  description: Returns a paginated list of active projects registered in the local Project Catalog.
+  parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/offset
+    - $ref: ../../components/common/components.yml#/components/parameters/limit
+    - $ref: ../../components/common/components.yml#/components/parameters/sortBy
+    - $ref: ../../components/common/components.yml#/components/parameters/order
+  responses:
+    "200":
+      description: Active projects.
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/projects/components.yml#/components/schemas/ProjectListResponse
+    "400":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/BadRequest400
+    "401":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    "403":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Forbidden403
+    "404":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
+    "409":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Conflict409
+    "422":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
+    "500":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500
+    "503":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/ServiceUnavailable503
+post:
+  operationId: createProject
+  tags:
+    - Projects
+  summary: Register a project
+  description: Registers a Jira project after a read-only validation that the exact key exists and is active in Jira.
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../components/projects/components.yml#/components/schemas/CreateProjectRequest
+  responses:
+    "201":
+      description: Project registered.
+      headers:
+        Location:
+          description: URI reference of the created resource.
+          schema:
+            type: string
+            format: uri-reference
+          required: true
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/projects/components.yml#/components/schemas/Project
+    "400":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/BadRequest400
+    "401":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    "403":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Forbidden403
+    "404":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
+    "409":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Conflict409
+    "422":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
+    "500":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500
+    "503":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/ServiceUnavailable503

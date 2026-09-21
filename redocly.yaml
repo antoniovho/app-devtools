@@ -1,0 +1,9 @@
+apis:
+  test-service:
+    root: ./apis/test-service/rest/openapi-rest.yml
+
+extends:
+  - recommended
+
+rules:
+  no-unused-components: warn

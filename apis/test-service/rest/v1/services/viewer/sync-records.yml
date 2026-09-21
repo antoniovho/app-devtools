@@ -1,0 +1,32 @@
+get:
+  operationId: listViewerSyncRecords
+  tags:
+    - Viewer Integration
+  summary: List outbound synchronization records
+  description: Returns a paginated list of canonical-to-viewer synchronization records.
+  parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/offset
+    - $ref: ../../components/common/components.yml#/components/parameters/limit
+  responses:
+    "200":
+      description: Sync records
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/viewer/components.yml#/components/schemas/ViewerSyncRecordListResponse
+    "400":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/BadRequest400
+    "401":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    "403":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Forbidden403
+    "404":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
+    "409":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Conflict409
+    "422":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
+    "500":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500
+    "503":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/ServiceUnavailable503

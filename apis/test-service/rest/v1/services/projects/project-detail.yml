@@ -1,0 +1,58 @@
+get:
+  operationId: getProject
+  tags:
+    - Projects
+  summary: Get a project
+  description: Returns a project by its stable project key, including logically deleted projects when explicitly authorized.
+  parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
+  responses:
+    "200":
+      description: Project.
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/projects/components.yml#/components/schemas/Project
+    "400":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/BadRequest400
+    "401":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    "403":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Forbidden403
+    "404":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
+    "409":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Conflict409
+    "422":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
+    "500":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500
+    "503":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/ServiceUnavailable503
+delete:
+  operationId: deleteProject
+  tags:
+    - Projects
+  summary: Logically delete a project
+  description: Marks the project as DELETED without deleting tests, sets, plans, executions, results, or artifacts.
+  parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
+  responses:
+    "204":
+      description: Project logically deleted. No response body is returned.
+    "400":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/BadRequest400
+    "401":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    "403":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Forbidden403
+    "404":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
+    "409":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Conflict409
+    "422":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
+    "500":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500
+    "503":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/ServiceUnavailable503

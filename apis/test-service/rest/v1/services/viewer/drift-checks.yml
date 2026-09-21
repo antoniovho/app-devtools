@@ -1,0 +1,29 @@
+post:
+  operationId: checkViewerDrift
+  tags:
+    - Viewer Integration
+  summary: Detect changes made in the external viewer
+  description: Checks the external viewer for drift without importing remote data into the domain.
+  responses:
+    "202":
+      description: Drift check accepted
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/viewer/components.yml#/components/schemas/DriftEvent
+    "400":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/BadRequest400
+    "401":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    "403":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Forbidden403
+    "404":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
+    "409":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Conflict409
+    "422":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
+    "500":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500
+    "503":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/ServiceUnavailable503

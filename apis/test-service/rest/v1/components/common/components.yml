@@ -1,0 +1,109 @@
+---
+components:
+  schemas:
+    UUID:
+      title: UUID
+      description: Universally unique identifier.
+      type: string
+      format: uuid
+      example: 550e8400-e29b-41d4-a716-446655440000
+    Offset:
+      title: Offset
+      description: Number of records to skip before returning results.
+      type: integer
+      format: int32
+      minimum: 0
+      default: 0
+    Limit:
+      title: Limit
+      description: Maximum number of records returned in one page.
+      type: integer
+      format: int32
+      minimum: 1
+      maximum: 100
+      default: 20
+    Pagination:
+      title: Pagination
+      description: Offset pagination metadata for a collection response.
+      type: object
+      additionalProperties: false
+      required:
+        - offset
+        - limit
+        - total
+      properties:
+        offset:
+          $ref: '#/components/schemas/Offset'
+        limit:
+          $ref: '#/components/schemas/Limit'
+        total:
+          type: integer
+          format: int64
+          minimum: 0
+          description: Total number of records matching the query.
+          example: 125
+    SortOrder:
+      title: SortOrder
+      description: Sort direction for ordered collection results.
+      type: string
+      enum:
+        - ASC
+        - DESC
+      default: ASC
+      example: ASC
+  parameters:
+    projectKey:
+      name: projectKey
+      in: query
+      required: true
+      description: Stable key of the project that owns the requested resources.
+      schema:
+        $ref: ../projects/components.yml#/components/schemas/ProjectKey
+    projectKeyPath:
+      name: projectKey
+      in: path
+      required: true
+      description: Stable key of the project in the Project Catalog.
+      schema:
+        $ref: ../projects/components.yml#/components/schemas/ProjectKey
+    offset:
+      name: offset
+      in: query
+      description: Number of records to skip before returning results.
+      schema:
+        $ref: '#/components/schemas/Offset'
+    limit:
+      name: limit
+      in: query
+      description: Maximum number of records returned in one page.
+      schema:
+        $ref: '#/components/schemas/Limit'
+    status:
+      name: status
+      in: query
+      required: false
+      description: Filter versions by lifecycle status. When omitted, all statuses are returned.
+      schema:
+        type: string
+        enum:
+          - DRAFT
+          - ACTIVE
+          - DEPRECATED
+    sortBy:
+      name: sortBy
+      in: query
+      description: Field used to sort the result set.
+      schema:
+        type: string
+        enum:
+          - status
+          - version
+          - name
+        default: version
+        example: version
+    order:
+      name: order
+      in: query
+      description: Sort direction.
+      schema:
+        $ref: '#/components/schemas/SortOrder'

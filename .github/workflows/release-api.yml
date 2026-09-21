@@ -66,15 +66,14 @@ jobs:
           fi
 
           DEFINITION_PATH="$(
-            yq -r \
-              --arg api "$API" \
-              '.apis[]
+            yq -r '
+              .apis[]
               | select(
-                  .id == $api and
+                  .id == strenv(API) and
                   ."api-spec-type" == "rest"
                 )
-              | ."definition-path"' \
-              "$CATALOG"
+              | ."definition-path"
+            ' "$CATALOG"
           )"
 
           if [[ -z "$DEFINITION_PATH" || "$DEFINITION_PATH" == "null" ]]; then
@@ -194,9 +193,12 @@ jobs:
           git fetch --tags --force
 
           LATEST_VERSION="$(
-            git tag --list "${API}-api-v*" \
-              | sed "s/^${API}-api-v//" \
-              | grep -E '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$' \
+            {
+              git tag --list "${API}-api-v*" \
+                | sed "s/^${API}-api-v//" \
+                | grep -E '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$' \
+                || true
+            } \
               | sort -V \
               | tail -n 1
           )"

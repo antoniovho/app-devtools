@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  REDOCLY_VERSION: "1.34.3"
+  REDOCLY_VERSION: "1.34.20"
 
 jobs:
   release:

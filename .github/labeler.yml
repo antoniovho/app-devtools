@@ -1,0 +1,11 @@
+area/api:
+  - changed-files:
+      - any-glob-to-any-file: "apis/**"
+
+area/github:
+  - changed-files:
+      - any-glob-to-any-file: ".github/**"
+
+kind/documentation:
+  - changed-files:
+      - any-glob-to-any-file: "**/*.md"

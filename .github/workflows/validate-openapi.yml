@@ -1,0 +1,335 @@
+name: Validate OpenAPI
+
+on:
+  pull_request:
+    paths:
+      - "apis/**"
+      - "redocly.yaml"
+      - ".github/workflows/validate-openapi.yml"
+      - ".github/workflows/release-api.yml"
+
+  issue_comment:
+    types:
+      - created
+
+  push:
+    branches:
+      - main
+    paths:
+      - "apis/**"
+      - "redocly.yaml"
+      - ".github/workflows/validate-openapi.yml"
+      - ".github/workflows/release-api.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-openapi-${{ github.workflow }}-${{ github.event.pull_request.number || github.event.issue.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  REDOCLY_VERSION: "1.34.3"
+
+jobs:
+  validate:
+    name: Validate all contracts
+    if: github.event_name != 'issue_comment'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4.4.0
+        with:
+          node-version: "22"
+
+      - name: Install yq
+        shell: bash
+        env:
+          YQ_VERSION: "v4.47.2"
+        run: |
+          set -euo pipefail
+
+          sudo wget \
+            -qO /usr/local/bin/yq \
+            "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64"
+
+          sudo chmod +x /usr/local/bin/yq
+
+          yq --version
+
+      - name: Select all APIs
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          CATALOG="apis/metadata.yml"
+
+          if [[ ! -f "$CATALOG" ]]; then
+            echo "API catalog not found: $CATALOG"
+            exit 1
+          fi
+
+          yq -r '
+            .apis[]
+            | select(."api-spec-type" == "rest")
+            | [.id, ."definition-path"]
+            | @tsv
+          ' "$CATALOG" > "$RUNNER_TEMP/apis.txt"
+
+          if [[ ! -s "$RUNNER_TEMP/apis.txt" ]]; then
+            echo "No REST APIs found in $CATALOG"
+            exit 1
+          fi
+
+          echo "Selected APIs:"
+          cat "$RUNNER_TEMP/apis.txt"
+
+      - name: Validate all APIs
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p "$RUNNER_TEMP/openapi"
+
+          while IFS=$'\t' read -r api definition_path; do
+            echo "========================================"
+            echo "Validating API: $api"
+            echo "Definition path: apis/$definition_path"
+            echo "========================================"
+
+            API_DIR="apis/$definition_path"
+            METADATA="$API_DIR/metadata.yml"
+
+            if [[ ! -d "$API_DIR" ]]; then
+              echo "API directory not found: $API_DIR"
+              exit 1
+            fi
+
+            if [[ ! -f "$METADATA" ]]; then
+              echo "API metadata not found: $METADATA"
+              exit 1
+            fi
+
+            VERSION="$(yq -r '.api.version // ""' "$METADATA")"
+            DEFINITION="$(yq -r '.api.definition // ""' "$METADATA")"
+
+            if [[ -z "$VERSION" ]]; then
+              echo "api.version is missing in $METADATA"
+              exit 1
+            fi
+
+            if [[ ! "$VERSION" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+              echo "Invalid SemVer version in $METADATA: $VERSION"
+              exit 1
+            fi
+
+            if [[ -z "$DEFINITION" ]]; then
+              echo "api.definition is missing in $METADATA"
+              exit 1
+            fi
+
+            ROOT="$API_DIR/$DEFINITION"
+
+            if [[ ! -f "$ROOT" ]]; then
+              echo "OpenAPI definition not found: $ROOT"
+              exit 1
+            fi
+
+            INFO_VERSION="$(yq -r '.info.version // ""' "$ROOT")"
+
+            if [[ "$INFO_VERSION" != "$VERSION" ]]; then
+              echo "Version mismatch for API '$api'"
+              echo "metadata.yml api.version: $VERSION"
+              echo "OpenAPI info.version:     $INFO_VERSION"
+              exit 1
+            fi
+
+            echo "Version: $VERSION"
+            echo "Definition: $ROOT"
+
+            npx --yes "@redocly/cli@$REDOCLY_VERSION" lint "$ROOT"
+
+            npx --yes "@redocly/cli@$REDOCLY_VERSION" bundle "$ROOT" \
+              --output "$RUNNER_TEMP/openapi/$api.yml"
+
+            test -s "$RUNNER_TEMP/openapi/$api.yml"
+
+            echo "API '$api' validated successfully."
+          done < "$RUNNER_TEMP/apis.txt"
+
+  validate-comment:
+    name: Validate contracts from PR command
+    if: >-
+      github.event_name == 'issue_comment' &&
+      github.event.issue.pull_request &&
+      contains(
+        fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'),
+        github.event.comment.author_association
+      ) &&
+      (
+        github.event.comment.body == '/validate-api' ||
+        startsWith(github.event.comment.body, '/validate-api ')
+      )
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: read
+
+    steps:
+      - name: Checkout pull request merge ref
+        uses: actions/checkout@v4.2.2
+        with:
+          ref: refs/pull/${{ github.event.issue.number }}/merge
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4.4.0
+        with:
+          node-version: "22"
+
+      - name: Install yq
+        shell: bash
+        env:
+          YQ_VERSION: "v4.47.2"
+        run: |
+          set -euo pipefail
+
+          sudo wget \
+            -qO /usr/local/bin/yq \
+            "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64"
+
+          sudo chmod +x /usr/local/bin/yq
+
+          yq --version
+
+      - name: Select APIs
+        shell: bash
+        env:
+          COMMENT: ${{ github.event.comment.body }}
+        run: |
+          set -euo pipefail
+
+          CATALOG="apis/metadata.yml"
+
+          if [[ ! -f "$CATALOG" ]]; then
+            echo "API catalog not found: $CATALOG"
+            exit 1
+          fi
+
+          if [[ "$COMMENT" == "/validate-api" ]]; then
+
+            yq -r '
+              .apis[]
+              | select(."api-spec-type" == "rest")
+              | [.id, ."definition-path"]
+              | @tsv
+            ' "$CATALOG" > "$RUNNER_TEMP/apis.txt"
+
+          elif [[ "$COMMENT" =~ ^/validate-api[[:space:]]+([a-z0-9-]+)$ ]]; then
+
+            API="${BASH_REMATCH[1]}"
+
+            yq -r \
+              --arg api "$API" \
+              '.apis[]
+               | select(
+                   .id == $api and
+                   ."api-spec-type" == "rest"
+                 )
+               | [.id, ."definition-path"]
+               | @tsv' \
+              "$CATALOG" > "$RUNNER_TEMP/apis.txt"
+
+          else
+            echo "Unsupported command."
+            echo
+            echo "Use:"
+            echo "  /validate-api"
+            echo "  /validate-api <api-id>"
+            exit 1
+          fi
+
+          if [[ ! -s "$RUNNER_TEMP/apis.txt" ]]; then
+            echo "No matching REST APIs found."
+            exit 1
+          fi
+
+          echo "Selected APIs:"
+          cat "$RUNNER_TEMP/apis.txt"
+
+      - name: Lint and bundle selected APIs
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p "$RUNNER_TEMP/openapi"
+
+          while IFS=$'\t' read -r api definition_path; do
+            echo "========================================"
+            echo "Validating API: $api"
+            echo "Definition path: apis/$definition_path"
+            echo "========================================"
+
+            API_DIR="apis/$definition_path"
+            METADATA="$API_DIR/metadata.yml"
+
+            if [[ ! -d "$API_DIR" ]]; then
+              echo "API directory not found: $API_DIR"
+              exit 1
+            fi
+
+            if [[ ! -f "$METADATA" ]]; then
+              echo "API metadata not found: $METADATA"
+              exit 1
+            fi
+
+            VERSION="$(yq -r '.api.version // ""' "$METADATA")"
+            DEFINITION="$(yq -r '.api.definition // ""' "$METADATA")"
+
+            if [[ -z "$VERSION" ]]; then
+              echo "api.version is missing in $METADATA"
+              exit 1
+            fi
+
+            if [[ ! "$VERSION" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+              echo "Invalid SemVer version in $METADATA: $VERSION"
+              exit 1
+            fi
+
+            if [[ -z "$DEFINITION" ]]; then
+              echo "api.definition is missing in $METADATA"
+              exit 1
+            fi
+
+            ROOT="$API_DIR/$DEFINITION"
+
+            if [[ ! -f "$ROOT" ]]; then
+              echo "OpenAPI definition not found: $ROOT"
+              exit 1
+            fi
+
+            INFO_VERSION="$(yq -r '.info.version // ""' "$ROOT")"
+
+            if [[ "$INFO_VERSION" != "$VERSION" ]]; then
+              echo "Version mismatch for API '$api'"
+              echo "metadata.yml api.version: $VERSION"
+              echo "OpenAPI info.version:     $INFO_VERSION"
+              exit 1
+            fi
+
+            echo "Version: $VERSION"
+            echo "Definition: $ROOT"
+
+            npx --yes "@redocly/cli@$REDOCLY_VERSION" lint "$ROOT"
+
+            npx --yes "@redocly/cli@$REDOCLY_VERSION" bundle "$ROOT" \
+              --output "$RUNNER_TEMP/openapi/$api.yml"
+
+            test -s "$RUNNER_TEMP/openapi/$api.yml"
+
+            echo "API '$api' validated successfully."
+          done < "$RUNNER_TEMP/apis.txt"

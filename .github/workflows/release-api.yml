@@ -1,0 +1,137 @@
+name: Release API Contract
+
+on:
+  workflow_dispatch:
+    inputs:
+      api:
+        description: API to release
+        required: true
+        type: choice
+        options:
+          - test-service
+
+      version:
+        description: Version to release, for example 0.1.0
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-api-${{ inputs.api }}-${{ inputs.version }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Release contract
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4.2.2
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4.4.0
+        with:
+          node-version: "22"
+
+      - name: Validate version
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          if [[ ! "$VERSION" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo "Invalid version: $VERSION"
+            exit 1
+          fi
+
+      - name: Define release metadata
+        id: metadata
+        env:
+          API: ${{ inputs.api }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          case "$API" in
+            test-service) ROOT="apis/test-service/rest/openapi-rest.yml" ;;
+            *) echo "Unsupported API: $API"; exit 1 ;;
+          esac
+
+          echo "tag=${API}-api-v${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "artifact=${API}-api-${VERSION}.yml" >> "$GITHUB_OUTPUT"
+          echo "root=$ROOT" >> "$GITHUB_OUTPUT"
+
+      - name: Check info.version
+        env:
+          VERSION: ${{ inputs.version }}
+          ROOT: ${{ steps.metadata.outputs.root }}
+        run: |
+          INFO_VERSION="$(awk '
+            /^info:/ { in_info=1; next }
+            in_info && /^[^[:space:]]/ { exit }
+            in_info && $1 == "version:" {
+              value=$2
+              gsub(/[",]/, "", value)
+              print value
+              exit
+            }
+          ' "$ROOT")"
+
+          if [[ "$INFO_VERSION" != "$VERSION" ]]; then
+            echo "info.version=$INFO_VERSION does not match version=$VERSION"
+            exit 1
+          fi
+
+      - name: Ensure tag does not exist
+        env:
+          TAG: ${{ steps.metadata.outputs.tag }}
+        run: |
+          if git show-ref --tags --verify --quiet "refs/tags/$TAG"; then
+            echo "Tag already exists locally: $TAG"
+            exit 1
+          fi
+
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
+            echo "Tag already exists remotely: $TAG"
+            exit 1
+          fi
+
+      - name: Lint OpenAPI
+        env:
+          ROOT: ${{ steps.metadata.outputs.root }}
+        run: |
+          npx --yes @redocly/cli@1.34.3 lint "$ROOT"
+
+      - name: Bundle OpenAPI
+        env:
+          ARTIFACT: ${{ steps.metadata.outputs.artifact }}
+          ROOT: ${{ steps.metadata.outputs.root }}
+        run: |
+          mkdir -p dist
+
+          npx --yes @redocly/cli@1.34.3 bundle "$ROOT" \
+            --output "dist/$ARTIFACT" \
+            --component-renaming-conflicts-severity=error
+
+          test -s "dist/$ARTIFACT"
+
+      - name: Create tag
+        env:
+          TAG: ${{ steps.metadata.outputs.tag }}
+        run: |
+          git tag --annotate "$TAG" "$(git rev-parse HEAD)" --message "Release $TAG"
+          git push origin "$TAG"
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.metadata.outputs.tag }}
+          ARTIFACT: ${{ steps.metadata.outputs.artifact }}
+        run: |
+          gh release create "$TAG" \
+            "dist/$ARTIFACT" \
+            --title "$TAG" \
+            --verify-tag \
+            --generate-notes

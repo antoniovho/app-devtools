@@ -1,0 +1,53 @@
+name: Validate OpenAPI
+
+on:
+  pull_request:
+    paths:
+      - "apis/**"
+      - "redocly.yaml"
+      - ".github/workflows/validate-openapi.yml"
+      - ".github/workflows/release-api.yml"
+
+  push:
+    branches:
+      - main
+    paths:
+      - "apis/**"
+      - "redocly.yaml"
+      - ".github/workflows/validate-openapi.yml"
+      - ".github/workflows/release-api.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-openapi-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate contracts
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4.4.0
+        with:
+          node-version: "22"
+
+      - name: Lint OpenAPI
+        run: |
+          npx --yes @redocly/cli@1.34.3 lint test-service
+
+      - name: Bundle OpenAPI
+        run: |
+          mkdir -p "$RUNNER_TEMP/openapi"
+
+          npx --yes @redocly/cli@1.34.3 bundle test-service \
+            --output "$RUNNER_TEMP/openapi/test-service-api.yml" \
+            --component-renaming-conflicts-severity=error
+
+          test -s "$RUNNER_TEMP/openapi/test-service-api.yml"

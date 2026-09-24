@@ -16,6 +16,9 @@
 - name: kind/chore
   color: "C5DEF5"
   description: "Maintenance"
+- name: kind/deployment
+  color: "5319E7"
+  description: "Deployment or release change"
 - name: kind/security
   color: "B60205"
   description: "Security"
@@ -49,6 +52,9 @@
 - name: area/api
   color: "006B75"
   description: "OpenAPI contracts"
+- name: area/sql
+  color: "7B4F2C"
+  description: "Database schema and SQL"
 - name: area/configuration
   color: "C2E0C6"
   description: "Repository configuration"

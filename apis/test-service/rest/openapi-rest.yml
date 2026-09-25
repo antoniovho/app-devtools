@@ -3,7 +3,7 @@ openapi: 3.0.3
 info:
   title: Test Service
   description: API for authoring immutable test definitions, composing test plans, executing validated plans, and publishing read-only projections to an external testing viewer.
-  version: 0.1.3
+  version: 0.1.4
   contact:
     name: Antonio Velasco Horcajada
     email: avelasco.horcajada@knowmadmood.com

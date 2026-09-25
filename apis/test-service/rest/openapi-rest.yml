@@ -96,10 +96,14 @@ paths:
     $ref: v1/services/execution/execution-result-actions.yml
   /v1/projects/{projectKey}/executions/{executionId}/results/{testResultId}/artifacts:
     $ref: v1/services/execution/execution-result-artifacts.yml
-  /v1/viewer/publications:
+  /v1/projects/{projectKey}/viewer/publications:
     $ref: v1/services/viewer/publications.yml
-  /v1/viewer/drift-checks:
+  /v1/projects/{projectKey}/viewer/drift-checks:
     $ref: v1/services/viewer/drift-checks.yml
+  /v1/projects/{projectKey}/viewer/sync-records:
+    $ref: v1/services/viewer/project-sync-records.yml
+  /v1/projects/{projectKey}/viewer/drift-events:
+    $ref: v1/services/viewer/project-drift-events.yml
   /v1/viewer/sync-records:
     $ref: v1/services/viewer/sync-records.yml
   /v1/viewer/drift-events:

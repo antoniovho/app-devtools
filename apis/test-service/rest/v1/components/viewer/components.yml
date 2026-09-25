@@ -46,9 +46,12 @@ components:
         - externalEntityKey
         - syncStatus
         - createdAt
+        - project
       properties:
         id:
           $ref: ../common/components.yml#/components/schemas/UUID
+        project:
+          $ref: ../projects/components.yml#/components/schemas/ProjectReference
         entityType:
           type: string
           description: Type of domain entity represented in the external viewer.
@@ -157,9 +160,12 @@ components:
         - driftType
         - notificationStatus
         - createdAt
+        - project
       properties:
         id:
           $ref: ../common/components.yml#/components/schemas/UUID
+        project:
+          $ref: ../projects/components.yml#/components/schemas/ProjectReference
         syncRecordId:
           description: >
             UUID of the viewer synchronization record for which the drift was detected.

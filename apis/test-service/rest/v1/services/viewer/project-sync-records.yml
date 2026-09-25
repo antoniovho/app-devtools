@@ -1,16 +1,18 @@
-post:
-  operationId: publishViewerProjection
+get:
+  operationId: listProjectViewerSyncRecords
   tags:
     - Viewer Integration
-  summary: Publish canonical data to the external viewer
-  description: >
-    Publishes the current ACTIVE version of every test case, precondition, test
-    set, and test plan in the project to the configured external viewer.
+  summary: List outbound synchronization records for a project
+  description: Returns a paginated list of canonical-to-viewer synchronization records for one project.
   parameters:
     - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
+    - $ref: ../../components/common/components.yml#/components/parameters/offset
+    - $ref: ../../components/common/components.yml#/components/parameters/limit
+    - $ref: ../../components/viewer/components.yml#/components/parameters/ViewerSyncRecordSortBy
+    - $ref: ../../components/common/components.yml#/components/parameters/order
   responses:
-    "202":
-      description: Publication accepted
+    "200":
+      description: Sync records
       content:
         application/json:
           schema:

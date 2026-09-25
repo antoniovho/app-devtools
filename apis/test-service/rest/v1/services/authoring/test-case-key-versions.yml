@@ -7,6 +7,7 @@ get:
   parameters:
     - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
     - $ref: ../../components/authoring/components.yml#/components/parameters/TestCaseKey
+    - $ref: ../../components/common/components.yml#/components/parameters/status
     - $ref: ../../components/common/components.yml#/components/parameters/offset
     - $ref: ../../components/common/components.yml#/components/parameters/limit
     - $ref: ../../components/common/components.yml#/components/parameters/sortBy

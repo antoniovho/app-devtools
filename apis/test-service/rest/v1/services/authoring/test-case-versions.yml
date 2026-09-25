@@ -8,6 +8,8 @@ get:
     - $ref: ../../components/authoring/components.yml#/components/parameters/TestCaseId
     - $ref: ../../components/common/components.yml#/components/parameters/offset
     - $ref: ../../components/common/components.yml#/components/parameters/limit
+    - $ref: ../../components/common/components.yml#/components/parameters/sortBy
+    - $ref: ../../components/common/components.yml#/components/parameters/order
   responses:
     "200":
       description: Versions

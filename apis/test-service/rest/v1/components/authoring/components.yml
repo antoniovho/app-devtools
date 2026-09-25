@@ -15,6 +15,26 @@ components:
       description: UUID of the precondition version.
       schema:
         $ref: ../common/components.yml#/components/schemas/UUID
+    TestCaseKey:
+      name: testKey
+      in: path
+      required: true
+      description: Stable business key of the test case.
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 100
+        example: checkout-happy-path
+    PreconditionKey:
+      name: preconditionKey
+      in: path
+      required: true
+      description: Stable business key of the precondition.
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 100
+        example: customer-is-authenticated
 
   schemas:
     Action:
@@ -249,7 +269,6 @@ components:
       type: object
       additionalProperties: false
       required:
-        - projectKey
         - testKey
         - name
         - summary
@@ -260,8 +279,6 @@ components:
         - definition
         - timeoutSeconds
       properties:
-        projectKey:
-          $ref: ../projects/components.yml#/components/schemas/ProjectKey
         testKey:
           type: string
           description: Stable business key of the test case.
@@ -449,14 +466,11 @@ components:
       type: object
       additionalProperties: false
       required:
-        - projectKey
         - preconditionKey
         - name
         - description
         - validationDefinition
       properties:
-        projectKey:
-          $ref: ../projects/components.yml#/components/schemas/ProjectKey
         preconditionKey:
           type: string
           description: Stable business key of the precondition.

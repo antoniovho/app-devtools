@@ -5,6 +5,7 @@ get:
   summary: List preconditions
   description: Returns a paginated list of versioned preconditions.
   parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
     - $ref: ../../components/common/components.yml#/components/parameters/status
     - $ref: ../../components/common/components.yml#/components/parameters/offset
     - $ref: ../../components/common/components.yml#/components/parameters/limit
@@ -39,6 +40,8 @@ post:
     - Authoring
   summary: Create a precondition version
   description: Creates a new immutable precondition version in draft status.
+  parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
   requestBody:
     required: true
     content:

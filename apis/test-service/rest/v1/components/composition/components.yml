@@ -15,6 +15,26 @@ components:
       description: UUID of the immutable test plan version.
       schema:
         $ref: ../common/components.yml#/components/schemas/UUID
+    TestSetKey:
+      name: setKey
+      in: path
+      required: true
+      description: Stable business key of the test set.
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 100
+        example: checkout-regression
+    TestPlanKey:
+      name: planKey
+      in: path
+      required: true
+      description: Stable business key of the test plan.
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 100
+        example: checkout-nightly
   schemas:
     TestSet:
       title: TestSet
@@ -89,13 +109,10 @@ components:
       type: object
       additionalProperties: false
       required:
-        - projectKey
         - setKey
         - name
         - items
       properties:
-        projectKey:
-          $ref: ../projects/components.yml#/components/schemas/ProjectKey
         setKey:
           type: string
           description: Stable business key of the test set.
@@ -142,6 +159,10 @@ components:
           offset: 0
           limit: 20
           total: 0
+    TestSetVersionListResponse:
+      title: TestSetVersionListResponse
+      allOf:
+        - $ref: '#/components/schemas/TestSetListResponse'
     TestPlan:
       title: TestPlan
       description: Immutable version of an executable test plan.
@@ -249,14 +270,11 @@ components:
       type: object
       additionalProperties: false
       required:
-        - projectKey
         - planKey
         - name
         - executionMode
         - timeoutSeconds
       properties:
-        projectKey:
-          $ref: ../projects/components.yml#/components/schemas/ProjectKey
         planKey:
           type: string
           description: Stable business key of the test plan.
@@ -336,3 +354,7 @@ components:
           offset: 0
           limit: 20
           total: 0
+    TestPlanVersionListResponse:
+      title: TestPlanVersionListResponse
+      allOf:
+        - $ref: '#/components/schemas/TestPlanListResponse'

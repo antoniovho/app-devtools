@@ -5,6 +5,7 @@ post:
   summary: Deprecate a test case version
   description: Deprecates a test case version so it cannot be selected for new compositions.
   parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
     - $ref: ../../components/authoring/components.yml#/components/parameters/TestCaseId
   requestBody:
     content:

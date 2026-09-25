@@ -5,7 +5,7 @@ get:
   summary: List executions
   description: Returns a paginated list of historical and active plan executions.
   parameters:
-    - $ref: ../../components/common/components.yml#/components/parameters/projectKey
+    - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
     - $ref: ../../components/common/components.yml#/components/parameters/offset
     - $ref: ../../components/common/components.yml#/components/parameters/limit
     - $ref: ../../components/execution/components.yml#/components/parameters/ExecutionOutcomeSortBy
@@ -39,6 +39,8 @@ post:
     - Execution
   summary: Create and schedule a plan execution
   description: Accepts a plan execution request and schedules it for asynchronous processing.
+  parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
   requestBody:
     required: true
     content:

@@ -5,6 +5,7 @@ post:
   summary: Activate a test case version
   description: Activates a draft test case version for future compositions and executions.
   parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
     - $ref: ../../components/authoring/components.yml#/components/parameters/TestCaseId
   requestBody:
     content:

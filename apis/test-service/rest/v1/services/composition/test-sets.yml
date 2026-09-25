@@ -5,7 +5,7 @@ get:
   summary: List test set snapshots
   description: Returns a paginated list of versioned test set snapshots.
   parameters:
-    - $ref: ../../components/common/components.yml#/components/parameters/projectKey
+    - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
     - $ref: ../../components/common/components.yml#/components/parameters/status
     - $ref: ../../components/common/components.yml#/components/parameters/offset
     - $ref: ../../components/common/components.yml#/components/parameters/limit
@@ -40,6 +40,8 @@ post:
     - Composition
   summary: Create a test set snapshot
   description: Creates an immutable test set snapshot referencing exact test case versions.
+  parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
   requestBody:
     required: true
     content:

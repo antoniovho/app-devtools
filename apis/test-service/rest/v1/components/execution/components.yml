@@ -22,6 +22,42 @@ components:
       description: UUID of the test result.
       schema:
         $ref: ../common/components.yml#/components/schemas/UUID
+    EnvironmentSortBy:
+      name: sortBy
+      in: query
+      description: Field used to sort the result set.
+      schema:
+        type: string
+        enum:
+          - name
+          - status
+          - createdAt
+        default: name
+        example: name
+    ExecutionOutcomeSortBy:
+      name: sortBy
+      in: query
+      description: Field used to sort the result set. Shared by executions, test results, and action results, which expose the same sortable fields.
+      schema:
+        type: string
+        enum:
+          - status
+          - startedAt
+          - finishedAt
+          - createdAt
+        default: createdAt
+        example: createdAt
+    TestResultArtifactSortBy:
+      name: sortBy
+      in: query
+      description: Field used to sort the result set.
+      schema:
+        type: string
+        enum:
+          - artifactType
+          - createdAt
+        default: createdAt
+        example: createdAt
   schemas:
     Environment:
       title: Environment

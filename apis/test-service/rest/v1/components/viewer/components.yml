@@ -1,5 +1,32 @@
 ---
 components:
+  parameters:
+    DriftEventSortBy:
+      name: sortBy
+      in: query
+      description: Field used to sort the result set.
+      schema:
+        type: string
+        enum:
+          - detectedAt
+          - driftType
+          - notificationStatus
+          - createdAt
+        default: detectedAt
+        example: detectedAt
+    ViewerSyncRecordSortBy:
+      name: sortBy
+      in: query
+      description: Field used to sort the result set.
+      schema:
+        type: string
+        enum:
+          - entityType
+          - syncStatus
+          - lastSyncedAt
+          - createdAt
+        default: createdAt
+        example: createdAt
   schemas:
     ViewerSyncRecord:
       title: ViewerSyncRecord

@@ -9,6 +9,8 @@ get:
     - $ref: ../../components/execution/components.yml#/components/parameters/TestResultId
     - $ref: ../../components/common/components.yml#/components/parameters/offset
     - $ref: ../../components/common/components.yml#/components/parameters/limit
+    - $ref: ../../components/execution/components.yml#/components/parameters/ExecutionOutcomeSortBy
+    - $ref: ../../components/common/components.yml#/components/parameters/order
   responses:
     "200":
       description: Action results

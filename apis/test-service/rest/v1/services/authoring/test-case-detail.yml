@@ -5,6 +5,7 @@ get:
   summary: Get a test case version
   description: Returns the complete definition and metadata of a test case version.
   parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
     - $ref: ../../components/authoring/components.yml#/components/parameters/TestCaseId
   responses:
     "200":

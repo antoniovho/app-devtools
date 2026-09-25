@@ -5,7 +5,7 @@ get:
   summary: List test plan snapshots
   description: Returns a paginated list of versioned test plan snapshots.
   parameters:
-    - $ref: ../../components/common/components.yml#/components/parameters/projectKey
+    - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
     - $ref: ../../components/common/components.yml#/components/parameters/status
     - $ref: ../../components/common/components.yml#/components/parameters/offset
     - $ref: ../../components/common/components.yml#/components/parameters/limit
@@ -38,6 +38,8 @@ post:
     - Composition
   summary: Create a test plan snapshot
   description: Creates an immutable test plan snapshot with sets, tests, and exclusions.
+  parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
   requestBody:
     required: true
     content:

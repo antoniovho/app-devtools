@@ -3,14 +3,19 @@ post:
   tags:
     - Viewer Integration
   summary: Detect changes made in the external viewer
-  description: Checks the external viewer for drift without importing remote data into the domain.
+  description: >
+    Checks the external viewer for drift across every ACTIVE test case,
+    precondition, test set, and test plan version in the project, without
+    importing remote data into the domain.
+  parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
   responses:
     "202":
       description: Drift check accepted
       content:
         application/json:
           schema:
-            $ref: ../../components/viewer/components.yml#/components/schemas/DriftEvent
+            $ref: ../../components/viewer/components.yml#/components/schemas/DriftEventListResponse
     "400":
       $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/BadRequest400
     "401":

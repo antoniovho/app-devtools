@@ -5,6 +5,7 @@ get:
   summary: List results for an execution
   description: Returns a paginated list of test results recorded for an execution.
   parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
     - name: executionId
       in: path
       required: true

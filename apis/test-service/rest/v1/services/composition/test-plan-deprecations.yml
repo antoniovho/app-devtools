@@ -5,6 +5,7 @@ post:
   summary: Deprecate a test plan version
   description: Marks a test plan version as deprecated.
   parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
     - $ref: ../../components/composition/components.yml#/components/parameters/TestPlanId
   requestBody:
     content:

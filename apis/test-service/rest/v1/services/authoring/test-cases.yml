@@ -5,7 +5,7 @@ get:
   summary: List test case versions
   description: Returns a paginated list of immutable test case versions.
   parameters:
-    - $ref: ../../components/common/components.yml#/components/parameters/projectKey
+    - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
     - $ref: ../../components/common/components.yml#/components/parameters/status
     - $ref: ../../components/common/components.yml#/components/parameters/offset
     - $ref: ../../components/common/components.yml#/components/parameters/limit
@@ -40,6 +40,8 @@ post:
     - Authoring
   summary: Create a test case version
   description: Creates a new immutable test case version in draft status.
+  parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
   requestBody:
     required: true
     content:

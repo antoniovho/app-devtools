@@ -5,6 +5,7 @@ get:
   summary: Get a test plan version
   description: Returns an immutable test plan version by UUID.
   parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
     - $ref: ../../components/composition/components.yml#/components/parameters/TestPlanId
   responses:
     "200":

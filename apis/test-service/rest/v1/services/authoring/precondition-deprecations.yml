@@ -5,6 +5,7 @@ post:
   summary: Deprecate a precondition version
   description: Marks an immutable precondition version as deprecated.
   parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
     - $ref: ../../components/authoring/components.yml#/components/parameters/PreconditionId
   requestBody:
     content:

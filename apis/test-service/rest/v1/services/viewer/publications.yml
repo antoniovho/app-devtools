@@ -3,14 +3,18 @@ post:
   tags:
     - Viewer Integration
   summary: Publish canonical data to the external viewer
-  description: Publishes the canonical local projection to the configured external viewer.
+  description: >
+    Publishes the current ACTIVE version of every test case, precondition, test
+    set, and test plan in the project to the configured external viewer.
+  parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
   responses:
     "202":
       description: Publication accepted
       content:
         application/json:
           schema:
-            $ref: ../../components/viewer/components.yml#/components/schemas/ViewerSyncRecord
+            $ref: ../../components/viewer/components.yml#/components/schemas/ViewerSyncRecordListResponse
     "400":
       $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/BadRequest400
     "401":

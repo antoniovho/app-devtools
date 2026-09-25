@@ -1,24 +1,22 @@
-post:
-  operationId: activateTestSet
+get:
+  operationId: listProjectViewerSyncRecords
   tags:
-    - Composition
-  summary: Activate a test set version
-  description: Marks a test set version as active for new compositions.
+    - Viewer Integration
+  summary: List outbound synchronization records for a project
+  description: Returns a paginated list of canonical-to-viewer synchronization records for one project.
   parameters:
     - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
-    - $ref: ../../components/composition/components.yml#/components/parameters/TestSetId
-  requestBody:
-    content:
-      application/json:
-        schema:
-          $ref: ../../components/authoring/components.yml#/components/schemas/ActionRequest
+    - $ref: ../../components/common/components.yml#/components/parameters/offset
+    - $ref: ../../components/common/components.yml#/components/parameters/limit
+    - $ref: ../../components/viewer/components.yml#/components/parameters/ViewerSyncRecordSortBy
+    - $ref: ../../components/common/components.yml#/components/parameters/order
   responses:
     "200":
-      description: Activated
+      description: Sync records
       content:
         application/json:
           schema:
-            $ref: ../../components/composition/components.yml#/components/schemas/TestSet
+            $ref: ../../components/viewer/components.yml#/components/schemas/ViewerSyncRecordListResponse
     "400":
       $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/BadRequest400
     "401":

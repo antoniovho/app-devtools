@@ -5,6 +5,7 @@ post:
   summary: Deprecate a test set version
   description: Marks a test set version as deprecated.
   parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
     - $ref: ../../components/composition/components.yml#/components/parameters/TestSetId
   requestBody:
     content:

@@ -5,6 +5,7 @@ post:
   summary: Create a test set version
   description: Creates a new immutable draft version of a test set.
   parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
     - $ref: ../../components/composition/components.yml#/components/parameters/TestSetId
   requestBody:
     required: true

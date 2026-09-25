@@ -5,6 +5,7 @@ post:
   summary: Activate a precondition version
   description: Activates a draft precondition version for future test executions.
   parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
     - $ref: ../../components/authoring/components.yml#/components/parameters/PreconditionId
   responses:
     "200":

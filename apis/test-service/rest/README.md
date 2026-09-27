@@ -12,7 +12,7 @@ to consumer repositories.
 
 - Root document: `openapi-rest.yml`
 - API metadata: `metadata.yml`
-- Current version: `0.1.5`
+- Current version: `0.1.6`
 - Base path: `/v1`
 - Local server: `http://localhost:8080`
 - Authentication: Bearer JWT (`bearerAuth`)
@@ -111,9 +111,9 @@ npx --yes @redocly/cli@1.34.20 lint apis/test-service/rest/openapi-rest.yml
 
 npx --yes @redocly/cli@1.34.20 bundle \
   apis/test-service/rest/openapi-rest.yml \
-  --output /tmp/test-service-api-0.1.5.yml
+  --output /tmp/test-service-api-0.1.6.yml
 
-openapi-generator-cli validate -i /tmp/test-service-api-0.1.5.yml
+openapi-generator-cli validate -i /tmp/test-service-api-0.1.6.yml
 
 ```
 
@@ -126,11 +126,11 @@ The release workflow resolves the API through `apis/metadata.yml`, validates
 that `metadata.yml` and `openapi-rest.yml` declare the same version, bundles the
 contract, and publishes an immutable GitHub Release from `main`.
 
-For version `0.1.5`:
+For version `0.1.6`:
 
 ```text
-Tag:      test-service-api-v0.1.5
-Asset:    test-service-api-0.1.5.yml
+Tag:      test-service-api-v0.1.6
+Asset:    test-service-api-0.1.6.yml
 ```
 
 Consumers must download and pin a specific release asset. Do not generate from,

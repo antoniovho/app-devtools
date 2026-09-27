@@ -6,6 +6,11 @@ post:
   description: Marks an environment as available for new executions.
   parameters:
     - $ref: ../../components/execution/components.yml#/components/parameters/EnvironmentId
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: ../../components/authoring/components.yml#/components/schemas/ActionRequest
   responses:
     "200":
       description: Activated

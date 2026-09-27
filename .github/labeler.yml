@@ -30,7 +30,7 @@ dependencies:
   - changed-files:
       - any-glob-to-any-file: ".github/dependabot.yml"
 
-kind/development:
+kind/deployment:
   - changed-files:
       - all-globs-to-all-files:
           - "apis/test-service/rest/metadata.yml"

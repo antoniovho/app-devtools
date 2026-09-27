@@ -308,6 +308,7 @@ components:
           description: Test execution modality.
           enum:
             - AUTOMATED
+            - MANUAL
           example: AUTOMATED
         testLevel:
           type: string

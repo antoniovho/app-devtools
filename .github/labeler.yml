@@ -29,3 +29,9 @@ area/sql:
 dependencies:
   - changed-files:
       - any-glob-to-any-file: ".github/dependabot.yml"
+
+kind/deployment:
+  - changed-files:
+      - all-globs-to-all-files:
+          - "apis/test-service/rest/metadata.yml"
+          - "apis/test-service/rest/openapi-rest.yml"

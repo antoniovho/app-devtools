@@ -1,23 +1,19 @@
-post:
-  operationId: publishViewerProjection
+get:
+  operationId: getProjectViewerOperation
   tags:
     - Viewer Integration
-  summary: Publish canonical data to the external viewer
-  description: >
-    Publishes the current ACTIVE version of every test case, precondition, test
-    set, and test plan in the project to the configured external viewer.
+  summary: Get an asynchronous Viewer operation
+  description: Retrieves the details of a specific asynchronous Viewer operation within a project.
   parameters:
     - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
-  requestBody:
-    required: true
-    description: External viewer that receives the project projection.
-    content:
-      application/json:
-        schema:
-          $ref: ../../components/viewer/components.yml#/components/schemas/ViewerOperationRequest
+    - name: viewerOperationId
+      in: path
+      required: true
+      schema:
+        $ref: ../../components/common/components.yml#/components/schemas/UUID
   responses:
-    "202":
-      description: Publication accepted
+    "200":
+      description: Viewer operation
       content:
         application/json:
           schema:
@@ -30,10 +26,6 @@ post:
       $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Forbidden403
     "404":
       $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
-    "409":
-      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Conflict409
-    "422":
-      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
     "500":
       $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500
     "503":

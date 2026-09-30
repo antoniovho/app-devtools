@@ -3,7 +3,7 @@ openapi: 3.0.3
 info:
   title: Test Service
   description: API for authoring immutable test definitions, composing test plans, executing validated plans, and publishing read-only projections to an external testing viewer.
-  version: 0.2.0
+  version: 0.3.0
   contact:
     name: Antonio Velasco Horcajada
     email: avelasco.horcajada@knowmadmood.com
@@ -104,10 +104,16 @@ paths:
     $ref: v1/services/viewer/project-sync-records.yml
   /v1/projects/{projectKey}/viewer/drift-events:
     $ref: v1/services/viewer/project-drift-events.yml
+  /v1/projects/{projectKey}/viewer/operations:
+    $ref: v1/services/viewer/project-operations.yml
+  /v1/projects/{projectKey}/viewer/operations/{viewerOperationId}:
+    $ref: v1/services/viewer/project-operation-detail.yml
   /v1/viewer/sync-records:
     $ref: v1/services/viewer/sync-records.yml
   /v1/viewer/drift-events:
     $ref: v1/services/viewer/drift-events.yml
+  /v1/viewer/operations:
+    $ref: v1/services/viewer/operations.yml
 components:
   securitySchemes:
     bearerAuth:

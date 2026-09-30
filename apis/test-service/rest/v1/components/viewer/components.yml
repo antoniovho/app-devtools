@@ -35,6 +35,20 @@ components:
           - createdAt
         default: createdAt
         example: createdAt
+    ViewerOperationSortBy:
+      name: sortBy
+      in: query
+      description: Field used to sort asynchronous Viewer operations.
+      schema:
+        type: string
+        enum:
+          - status
+          - operationType
+          - createdAt
+          - startedAt
+          - finishedAt
+        default: createdAt
+        example: createdAt
   schemas:
     ViewerType:
       title: ViewerType
@@ -53,6 +67,79 @@ components:
       properties:
         viewerType:
           $ref: "#/components/schemas/ViewerType"
+    ViewerOperation:
+      title: ViewerOperation
+      description: >
+        Public, asynchronous request to publish a project projection or check it
+        for drift. This resource exposes only safe operation progress and
+        aggregate counters; provider payloads, projection fingerprints, external
+        identifiers, and internal errors are never exposed here.
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - project
+        - viewerType
+        - operationType
+        - status
+        - createdAt
+      properties:
+        id:
+          $ref: ../common/components.yml#/components/schemas/UUID
+        project:
+          $ref: ../projects/components.yml#/components/schemas/ProjectReference
+        viewerType:
+          $ref: "#/components/schemas/ViewerType"
+        operationType:
+          type: string
+          enum:
+            - PUBLICATION
+            - DRIFT_CHECK
+        status:
+          type: string
+          enum:
+            - PENDING
+            - RUNNING
+            - SUCCEEDED
+            - PARTIALLY_SUCCEEDED
+            - FAILED
+        createdAt:
+          type: string
+          format: date-time
+        startedAt:
+          type: string
+          format: date-time
+        finishedAt:
+          type: string
+          format: date-time
+        totalItems:
+          type: integer
+          minimum: 0
+        succeededItems:
+          type: integer
+          minimum: 0
+        failedItems:
+          type: integer
+          minimum: 0
+        error:
+          type: string
+          description: Safe functional error summary, when available.
+          maxLength: 1000
+    ViewerOperationListResponse:
+      title: ViewerOperationListResponse
+      type: object
+      additionalProperties: false
+      required:
+        - data
+        - pagination
+      properties:
+        data:
+          type: array
+          maxItems: 100
+          items:
+            $ref: "#/components/schemas/ViewerOperation"
+        pagination:
+          $ref: ../common/components.yml#/components/schemas/Pagination
     ViewerSyncRecord:
       title: ViewerSyncRecord
       description: >

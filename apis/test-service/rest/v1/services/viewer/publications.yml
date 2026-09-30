@@ -8,6 +8,13 @@ post:
     set, and test plan in the project to the configured external viewer.
   parameters:
     - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
+  requestBody:
+    required: true
+    description: External viewer that receives the project projection.
+    content:
+      application/json:
+        schema:
+          $ref: ../../components/viewer/components.yml#/components/schemas/ViewerOperationRequest
   responses:
     "202":
       description: Publication accepted

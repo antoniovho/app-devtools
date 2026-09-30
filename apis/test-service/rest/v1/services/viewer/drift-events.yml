@@ -5,6 +5,7 @@ get:
   summary: List detected viewer drift events
   description: Returns a paginated list of detected viewer changes and notification states.
   parameters:
+    - $ref: ../../components/viewer/components.yml#/components/parameters/ViewerType
     - $ref: ../../components/common/components.yml#/components/parameters/offset
     - $ref: ../../components/common/components.yml#/components/parameters/limit
     - $ref: ../../components/viewer/components.yml#/components/parameters/DriftEventSortBy

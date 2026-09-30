@@ -5,6 +5,7 @@ get:
   summary: List outbound synchronization records
   description: Returns a paginated list of canonical-to-viewer synchronization records.
   parameters:
+    - $ref: ../../components/viewer/components.yml#/components/parameters/ViewerType
     - $ref: ../../components/common/components.yml#/components/parameters/offset
     - $ref: ../../components/common/components.yml#/components/parameters/limit
     - $ref: ../../components/viewer/components.yml#/components/parameters/ViewerSyncRecordSortBy

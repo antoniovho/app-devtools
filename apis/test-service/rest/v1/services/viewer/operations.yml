@@ -1,0 +1,29 @@
+get:
+  operationId: listViewerOperations
+  tags:
+    - Viewer Integration
+  summary: List asynchronous Viewer operations
+  description: Returns a paginated list of asynchronous Viewer operations.
+  parameters:
+    - $ref: ../../components/viewer/components.yml#/components/parameters/ViewerType
+    - $ref: ../../components/common/components.yml#/components/parameters/offset
+    - $ref: ../../components/common/components.yml#/components/parameters/limit
+    - $ref: ../../components/viewer/components.yml#/components/parameters/ViewerOperationSortBy
+    - $ref: ../../components/common/components.yml#/components/parameters/order
+  responses:
+    "200":
+      description: Viewer operations
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/viewer/components.yml#/components/schemas/ViewerOperationListResponse
+    "400":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/BadRequest400
+    "401":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    "403":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Forbidden403
+    "500":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500
+    "503":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/ServiceUnavailable503

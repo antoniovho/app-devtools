@@ -1,24 +1,19 @@
-post:
-  operationId: checkViewerDrift
+get:
+  operationId: getProjectViewerOperation
   tags:
     - Viewer Integration
-  summary: Detect changes made in the external viewer
-  description: >
-    Checks the external viewer for drift across every ACTIVE test case,
-    precondition, test set, and test plan version in the project, without
-    importing remote data into the domain.
+  summary: Get an asynchronous Viewer operation
+  description: Retrieves the details of a specific asynchronous Viewer operation within a project.
   parameters:
     - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
-  requestBody:
-    required: true
-    description: External viewer whose project projection is checked for drift.
-    content:
-      application/json:
-        schema:
-          $ref: ../../components/viewer/components.yml#/components/schemas/ViewerOperationRequest
+    - name: viewerOperationId
+      in: path
+      required: true
+      schema:
+        $ref: ../../components/common/components.yml#/components/schemas/UUID
   responses:
-    "202":
-      description: Drift check accepted
+    "200":
+      description: Viewer operation
       content:
         application/json:
           schema:
@@ -31,10 +26,6 @@ post:
       $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Forbidden403
     "404":
       $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
-    "409":
-      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Conflict409
-    "422":
-      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
     "500":
       $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500
     "503":

@@ -9,6 +9,13 @@ post:
     importing remote data into the domain.
   parameters:
     - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
+  requestBody:
+    required: true
+    description: External viewer whose project projection is checked for drift.
+    content:
+      application/json:
+        schema:
+          $ref: ../../components/viewer/components.yml#/components/schemas/ViewerOperationRequest
   responses:
     "202":
       description: Drift check accepted

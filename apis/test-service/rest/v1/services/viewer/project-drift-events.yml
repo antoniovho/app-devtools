@@ -6,6 +6,7 @@ get:
   description: Returns a paginated list of detected viewer changes and notification states for one project.
   parameters:
     - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
+    - $ref: ../../components/viewer/components.yml#/components/parameters/ViewerType
     - $ref: ../../components/common/components.yml#/components/parameters/offset
     - $ref: ../../components/common/components.yml#/components/parameters/limit
     - $ref: ../../components/viewer/components.yml#/components/parameters/DriftEventSortBy

@@ -1,6 +1,14 @@
 ---
 components:
   parameters:
+    ViewerType:
+      name: viewerType
+      in: query
+      required: false
+      description: Optional external viewer integration used to filter the result set.
+      schema:
+        $ref: "#/components/schemas/ViewerType"
+      example: XRAY
     DriftEventSortBy:
       name: sortBy
       in: query
@@ -28,6 +36,23 @@ components:
         default: createdAt
         example: createdAt
   schemas:
+    ViewerType:
+      title: ViewerType
+      description: Type of supported external viewer integration.
+      type: string
+      enum:
+        - XRAY
+      example: XRAY
+    ViewerOperationRequest:
+      title: ViewerOperationRequest
+      description: Selects the external viewer targeted by a Viewer command.
+      type: object
+      additionalProperties: false
+      required:
+        - viewerType
+      properties:
+        viewerType:
+          $ref: "#/components/schemas/ViewerType"
     ViewerSyncRecord:
       title: ViewerSyncRecord
       description: >
@@ -76,11 +101,9 @@ components:
           allOf:
             - $ref: ../common/components.yml#/components/schemas/UUID
         viewerType:
-          type: string
           description: Type of external viewer containing the projection.
-          enum:
-            - XRAY
-          example: XRAY
+          allOf:
+            - $ref: "#/components/schemas/ViewerType"
         externalEntityKey:
           type: string
           description: >

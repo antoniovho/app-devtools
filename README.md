@@ -27,7 +27,7 @@ Para validación de PR, sí:
 
 `metadata.version >= última versión publicada`
 
-Porque durante desarrollo puedes seguir trabajando sobre 0.2.0 aunque todavía no esté publicada.
+Porque durante desarrollo puedes seguir trabajando sobre 0.3.0 aunque todavía no esté publicada.
 
 Pero para crear una nueva release, debe ser estrictamente:
 
@@ -44,7 +44,7 @@ metadata 0.1.1
     ├── validate → OK
     └── release  → OK
 
-metadata 0.2.0
+metadata 0.3.0
     ├── validate → OK
     └── release  → OK
 

@@ -21,7 +21,7 @@ post:
       content:
         application/json:
           schema:
-            $ref: ../../components/viewer/components.yml#/components/schemas/ViewerSyncRecordListResponse
+            $ref: ../../components/viewer/components.yml#/components/schemas/ViewerOperation
     "400":
       $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/BadRequest400
     "401":

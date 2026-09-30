@@ -12,8 +12,8 @@ post:
       schema:
         $ref: ../../components/common/components.yml#/components/schemas/UUID
   responses:
-    "200":
-      description: Cancelled
+    "202":
+      description: Cancellation accepted
       content:
         application/json:
           schema:

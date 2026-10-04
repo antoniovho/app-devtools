@@ -220,6 +220,12 @@ components:
             - CANCELLED
             - ERROR
           example: RUNNING
+        runnerIdentifier:
+          type: string
+          description: Stable identifier of the runner accepted when the execution was scheduled.
+          minLength: 1
+          maxLength: 100
+          example: tavern
         runnerVersion:
           type: string
           description: Version of the execution runner.

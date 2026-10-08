@@ -215,16 +215,10 @@ components:
           example: ACTIVE
         executionMode:
           type: string
-          description: Scheduling mode for plan items.
+          description: Execution mode for plan items.
           enum:
             - SEQUENTIAL
-            - PARALLEL
           example: SEQUENTIAL
-        maxParallelism:
-          type: integer
-          description: Maximum number of concurrent executions.
-          minimum: 1
-          example: 4
         timeoutSeconds:
           type: integer
           description: Maximum plan execution time in seconds.
@@ -293,16 +287,10 @@ components:
           example: Nightly checkout validation
         executionMode:
           type: string
-          description: Scheduling mode for plan items.
+          description: Execution mode for plan items.
           enum:
             - SEQUENTIAL
-            - PARALLEL
           example: SEQUENTIAL
-        maxParallelism:
-          type: integer
-          description: Maximum number of concurrent executions.
-          minimum: 1
-          example: 4
         timeoutSeconds:
           type: integer
           description: Maximum plan execution time in seconds.

@@ -89,7 +89,11 @@ components:
           example: "1.0"
         variables:
           type: object
-          description: Runtime variables available to actions.
+          description: >
+            Service-owned runtime variables available to actions. Reference one
+            with `{{variableName}}`; the service resolves it before invoking
+            the runner. In Tavern-backed HTTP actions, `{variableName}` is
+            reserved for a dynamic variable saved by a preceding Tavern stage.
           additionalProperties:
             type: string
           example:

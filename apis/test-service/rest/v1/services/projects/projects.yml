@@ -7,7 +7,7 @@ get:
   parameters:
     - $ref: ../../components/common/components.yml#/components/parameters/offset
     - $ref: ../../components/common/components.yml#/components/parameters/limit
-    - $ref: ../../components/common/components.yml#/components/parameters/sortBy
+    - $ref: ../../components/projects/components.yml#/components/parameters/ProjectSortBy
     - $ref: ../../components/common/components.yml#/components/parameters/order
   responses:
     "200":

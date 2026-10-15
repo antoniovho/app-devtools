@@ -1,5 +1,19 @@
 ---
 components:
+  parameters:
+    ProjectSortBy:
+      name: sortBy
+      in: query
+      description: Field used to sort projects.
+      schema:
+        type: string
+        enum:
+          - key
+          - name
+          - status
+          - createdAt
+        default: createdAt
+        example: createdAt
   schemas:
     ProjectKey:
       title: ProjectKey

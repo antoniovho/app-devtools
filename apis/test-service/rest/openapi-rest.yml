@@ -3,7 +3,7 @@ openapi: 3.0.3
 info:
   title: Test Service
   description: API for authoring immutable test definitions, composing test plans, executing validated plans, and publishing read-only projections to an external testing viewer.
-  version: 0.3.4
+  version: 0.3.5
   contact:
     name: Antonio Velasco Horcajada
     email: avelasco.horcajada@knowmadmood.com
@@ -26,6 +26,8 @@ paths:
     $ref: v1/services/projects/projects.yml
   /v1/projects/{projectKey}:
     $ref: v1/services/projects/project-detail.yml
+  /v1/projects/{projectKey}/restorations:
+    $ref: v1/services/projects/project-restorations.yml
   /v1/projects/{projectKey}/test-cases:
     $ref: v1/services/authoring/test-cases.yml
   /v1/projects/{projectKey}/test-cases/{testCaseId}:

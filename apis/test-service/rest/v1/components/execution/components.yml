@@ -27,38 +27,50 @@ components:
       in: query
       description: Field used to sort the result set.
       schema:
-        type: string
-        enum:
-          - name
-          - status
-          - createdAt
-        default: name
-        example: name
+        $ref: '#/components/schemas/EnvironmentSortBy'
     ExecutionOutcomeSortBy:
       name: sortBy
       in: query
       description: Field used to sort the result set. Shared by executions, test results, and action results, which expose the same sortable fields.
       schema:
-        type: string
-        enum:
-          - status
-          - startedAt
-          - finishedAt
-          - createdAt
-        default: createdAt
-        example: createdAt
+        $ref: '#/components/schemas/ExecutionOutcomeSortBy'
     TestResultArtifactSortBy:
       name: sortBy
       in: query
       description: Field used to sort the result set.
       schema:
-        type: string
-        enum:
-          - artifactType
-          - createdAt
-        default: createdAt
-        example: createdAt
+        $ref: '#/components/schemas/TestResultArtifactSortBy'
   schemas:
+    EnvironmentSortBy:
+      title: EnvironmentSortBy
+      description: Field used to sort the result set.
+      type: string
+      enum:
+        - name
+        - status
+        - createdAt
+      default: name
+      example: name
+    ExecutionOutcomeSortBy:
+      title: ExecutionOutcomeSortBy
+      description: Field used to sort the result set. Shared by executions, test results, and action results, which expose the same sortable fields.
+      type: string
+      enum:
+        - status
+        - startedAt
+        - finishedAt
+        - createdAt
+      default: createdAt
+      example: createdAt
+    TestResultArtifactSortBy:
+      title: TestResultArtifactSortBy
+      description: Field used to sort the result set.
+      type: string
+      enum:
+        - artifactType
+        - createdAt
+      default: createdAt
+      example: createdAt
     Environment:
       title: Environment
       description: Target environment configuration used by test executions.

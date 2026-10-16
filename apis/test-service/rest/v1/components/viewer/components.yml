@@ -14,42 +14,54 @@ components:
       in: query
       description: Field used to sort the result set.
       schema:
-        type: string
-        enum:
-          - detectedAt
-          - driftType
-          - notificationStatus
-          - createdAt
-        default: detectedAt
-        example: detectedAt
+        $ref: '#/components/schemas/DriftEventSortBy'
     ViewerSyncRecordSortBy:
       name: sortBy
       in: query
       description: Field used to sort the result set.
       schema:
-        type: string
-        enum:
-          - entityType
-          - syncStatus
-          - lastSyncedAt
-          - createdAt
-        default: createdAt
-        example: createdAt
+        $ref: '#/components/schemas/ViewerSyncRecordSortBy'
     ViewerOperationSortBy:
       name: sortBy
       in: query
       description: Field used to sort asynchronous Viewer operations.
       schema:
-        type: string
-        enum:
-          - status
-          - operationType
-          - createdAt
-          - startedAt
-          - finishedAt
-        default: createdAt
-        example: createdAt
+        $ref: '#/components/schemas/ViewerOperationSortBy'
   schemas:
+    DriftEventSortBy:
+      title: DriftEventSortBy
+      description: Field used to sort the result set.
+      type: string
+      enum:
+        - detectedAt
+        - driftType
+        - notificationStatus
+        - createdAt
+      default: detectedAt
+      example: detectedAt
+    ViewerSyncRecordSortBy:
+      title: ViewerSyncRecordSortBy
+      description: Field used to sort the result set.
+      type: string
+      enum:
+        - entityType
+        - syncStatus
+        - lastSyncedAt
+        - createdAt
+      default: createdAt
+      example: createdAt
+    ViewerOperationSortBy:
+      title: ViewerOperationSortBy
+      description: Field used to sort asynchronous Viewer operations.
+      type: string
+      enum:
+        - status
+        - operationType
+        - createdAt
+        - startedAt
+        - finishedAt
+      default: createdAt
+      example: createdAt
     ViewerType:
       title: ViewerType
       description: Type of supported external viewer integration.

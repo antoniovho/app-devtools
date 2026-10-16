@@ -51,6 +51,15 @@ components:
         - DESC
       default: ASC
       example: ASC
+    VersionStatus:
+      title: VersionStatus
+      description: Lifecycle status of a versioned resource.
+      type: string
+      enum:
+        - DRAFT
+        - ACTIVE
+        - DEPRECATED
+      example: DRAFT
     SortBy:
       title: SortBy
       description: Field used to sort the result set.
@@ -94,11 +103,7 @@ components:
       required: false
       description: Filter versions by lifecycle status. When omitted, all statuses are returned.
       schema:
-        type: string
-        enum:
-          - DRAFT
-          - ACTIVE
-          - DEPRECATED
+        $ref: '#/components/schemas/VersionStatus'
     sortBy:
       name: sortBy
       in: query

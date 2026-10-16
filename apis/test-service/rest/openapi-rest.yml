@@ -3,7 +3,7 @@ openapi: 3.0.3
 info:
   title: Test Service
   description: API for authoring immutable test definitions, composing test plans, executing validated plans, and publishing read-only projections to an external testing viewer.
-  version: 0.3.5
+  version: 0.4.0
   contact:
     name: Antonio Velasco Horcajada
     email: avelasco.horcajada@knowmadmood.com
@@ -34,6 +34,8 @@ paths:
     $ref: v1/services/authoring/test-case-detail.yml
   /v1/projects/{projectKey}/test-cases/{testCaseId}/versions:
     $ref: v1/services/authoring/test-case-versions.yml
+  /v1/projects/{projectKey}/test-cases/{testCaseId}/restorations:
+    $ref: v1/services/authoring/test-case-restorations.yml
   /v1/projects/{projectKey}/test-cases/{testCaseId}/activations:
     $ref: v1/services/authoring/test-case-activations.yml
   /v1/projects/{projectKey}/test-cases/{testCaseId}/deprecations:
@@ -46,6 +48,8 @@ paths:
     $ref: v1/services/authoring/precondition-detail.yml
   /v1/projects/{projectKey}/preconditions/{preconditionId}/versions:
     $ref: v1/services/authoring/precondition-versions.yml
+  /v1/projects/{projectKey}/preconditions/{preconditionId}/restorations:
+    $ref: v1/services/authoring/precondition-restorations.yml
   /v1/projects/{projectKey}/preconditions/{preconditionId}/activations:
     $ref: v1/services/authoring/precondition-activations.yml
   /v1/projects/{projectKey}/preconditions/{preconditionId}/deprecations:
@@ -58,6 +62,8 @@ paths:
     $ref: v1/services/composition/test-set-detail.yml
   /v1/projects/{projectKey}/test-sets/{testSetId}/versions:
     $ref: v1/services/composition/test-set-versions.yml
+  /v1/projects/{projectKey}/test-sets/{testSetId}/restorations:
+    $ref: v1/services/composition/test-set-restorations.yml
   /v1/projects/{projectKey}/test-sets/{testSetId}/activations:
     $ref: v1/services/composition/test-set-activations.yml
   /v1/projects/{projectKey}/test-sets/{testSetId}/deprecations:
@@ -70,6 +76,8 @@ paths:
     $ref: v1/services/composition/test-plan-detail.yml
   /v1/projects/{projectKey}/test-plans/{testPlanId}/versions:
     $ref: v1/services/composition/test-plan-versions.yml
+  /v1/projects/{projectKey}/test-plans/{testPlanId}/restorations:
+    $ref: v1/services/composition/test-plan-restorations.yml
   /v1/projects/{projectKey}/test-plans/{testPlanId}/activations:
     $ref: v1/services/composition/test-plan-activations.yml
   /v1/projects/{projectKey}/test-plans/{testPlanId}/deprecations:

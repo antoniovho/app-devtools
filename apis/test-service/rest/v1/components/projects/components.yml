@@ -6,15 +6,19 @@ components:
       in: query
       description: Field used to sort projects.
       schema:
-        type: string
-        enum:
-          - key
-          - name
-          - status
-          - createdAt
-        default: createdAt
-        example: createdAt
+        $ref: '#/components/schemas/ProjectSortBy'
   schemas:
+    ProjectSortBy:
+      title: ProjectSortBy
+      description: Field used to sort projects.
+      type: string
+      enum:
+        - key
+        - name
+        - status
+        - createdAt
+      default: createdAt
+      example: createdAt
     ProjectKey:
       title: ProjectKey
       description: Stable key used to identify a project in the Project Catalog.

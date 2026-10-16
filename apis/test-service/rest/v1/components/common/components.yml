@@ -51,6 +51,16 @@ components:
         - DESC
       default: ASC
       example: ASC
+    SortBy:
+      title: SortBy
+      description: Field used to sort the result set.
+      type: string
+      enum:
+        - status
+        - version
+        - name
+      default: version
+      example: version
   parameters:
     projectKey:
       name: projectKey
@@ -94,13 +104,7 @@ components:
       in: query
       description: Field used to sort the result set.
       schema:
-        type: string
-        enum:
-          - status
-          - version
-          - name
-        default: version
-        example: version
+        $ref: '#/components/schemas/SortBy'
     order:
       name: order
       in: query

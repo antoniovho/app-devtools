@@ -3,15 +3,16 @@ get:
   tags:
     - Projects
   summary: List projects
-  description: Returns a paginated list of active projects registered in the local Project Catalog.
+  description: Returns a paginated list of projects registered in the local Project Catalog. When status is omitted, projects in all lifecycle states are returned.
   parameters:
     - $ref: ../../components/common/components.yml#/components/parameters/offset
     - $ref: ../../components/common/components.yml#/components/parameters/limit
     - $ref: ../../components/projects/components.yml#/components/parameters/ProjectSortBy
     - $ref: ../../components/common/components.yml#/components/parameters/order
+    - $ref: ../../components/projects/components.yml#/components/parameters/ProjectStatusFilter
   responses:
     "200":
-      description: Active projects.
+      description: Projects matching the optional lifecycle-status filter.
       content:
         application/json:
           schema:

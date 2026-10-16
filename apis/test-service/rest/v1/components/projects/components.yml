@@ -7,6 +7,12 @@ components:
       description: Field used to sort projects.
       schema:
         $ref: '#/components/schemas/ProjectSortBy'
+    ProjectStatusFilter:
+      name: status
+      in: query
+      description: Filter projects by lifecycle status. When omitted, projects in all states are returned.
+      schema:
+        $ref: '#/components/schemas/ProjectStatus'
   schemas:
     ProjectSortBy:
       title: ProjectSortBy
@@ -19,6 +25,14 @@ components:
         - createdAt
       default: createdAt
       example: createdAt
+    ProjectStatus:
+      title: ProjectStatus
+      description: Lifecycle status of a project in the local Project Catalog.
+      type: string
+      enum:
+        - ACTIVE
+        - DELETED
+      example: ACTIVE
     ProjectKey:
       title: ProjectKey
       description: Stable key used to identify a project in the Project Catalog.
@@ -64,12 +78,7 @@ components:
           maxLength: 255
           example: AI Gateway
         status:
-          type: string
-          description: Project lifecycle status. DELETED is a logical deletion state.
-          enum:
-            - ACTIVE
-            - DELETED
-          example: ACTIVE
+          $ref: '#/components/schemas/ProjectStatus'
         createdAt:
           type: string
           format: date-time
@@ -111,7 +120,7 @@ components:
           example: AI Gateway
     ProjectListResponse:
       title: ProjectListResponse
-      description: Paginated collection of active projects in the local Project Catalog.
+      description: Paginated collection of projects in the local Project Catalog.
       type: object
       additionalProperties: false
       required:
@@ -120,7 +129,7 @@ components:
       properties:
         data:
           type: array
-          description: Active projects in the requested page.
+          description: Projects in the requested page.
           items:
             $ref: '#/components/schemas/Project'
           maxItems: 100

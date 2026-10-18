@@ -12,7 +12,7 @@ post:
     content:
       application/json:
         schema:
-          $ref: ../../components/authoring/components.yml#/components/schemas/CreatePreconditionRequest
+          $ref: ../../components/authoring/components.yml#/components/schemas/CreatePreconditionVersionRequest
   responses:
     "201":
       description: Created

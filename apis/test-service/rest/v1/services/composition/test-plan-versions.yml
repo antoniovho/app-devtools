@@ -12,7 +12,7 @@ post:
     content:
       application/json:
         schema:
-          $ref: ../../components/composition/components.yml#/components/schemas/CreateTestPlanRequest
+          $ref: ../../components/composition/components.yml#/components/schemas/CreateTestPlanVersionRequest
   responses:
     "201":
       description: Created

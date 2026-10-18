@@ -136,6 +136,32 @@ components:
           uniqueItems: true
           items:
             $ref: ../common/components.yml#/components/schemas/UUID
+    CreateTestSetVersionRequest:
+      title: CreateTestSetVersionRequest
+      description: Payload used to create the next immutable version of the test set selected in the path. Its set key is inherited from that source version.
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - items
+      properties:
+        name:
+          type: string
+          description: Human-readable test set name.
+          minLength: 1
+          maxLength: 255
+          example: Checkout regression
+        description:
+          type: string
+          description: Purpose of the test set.
+          example: Regression tests for checkout
+        items:
+          type: array
+          description: Ordered test case versions belonging to this test set. Array order determines execution order.
+          minItems: 1
+          uniqueItems: true
+          items:
+            $ref: ../common/components.yml#/components/schemas/UUID
     TestSetListResponse:
       title: TestSetListResponse
       description: Paginated collection of test set versions.
@@ -290,6 +316,59 @@ components:
           description: Execution mode for plan items.
           enum:
             - SEQUENTIAL
+          example: SEQUENTIAL
+        timeoutSeconds:
+          type: integer
+          description: Maximum plan execution time in seconds.
+          minimum: 1
+          example: 900
+        testSetIds:
+          type: array
+          description: Test set versions included in the plan.
+          uniqueItems: true
+          items:
+            $ref: ../common/components.yml#/components/schemas/UUID
+          example:
+            - 550e8400-e29b-41d4-a716-446655440000
+        testCaseIds:
+          type: array
+          description: Individual test case versions included in the plan.
+          uniqueItems: true
+          items:
+            $ref: ../common/components.yml#/components/schemas/UUID
+          example:
+            - 550e8400-e29b-41d4-a716-446655440000
+        exclusions:
+          type: array
+          description: Test case versions excluded from execution.
+          uniqueItems: true
+          items:
+            $ref: ../common/components.yml#/components/schemas/UUID
+          example: []
+    CreateTestPlanVersionRequest:
+      title: CreateTestPlanVersionRequest
+      description: Payload used to create the next immutable version of the test plan selected in the path. Its plan key is inherited from that source version.
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - executionMode
+        - timeoutSeconds
+      properties:
+        name:
+          type: string
+          description: Human-readable test plan name.
+          minLength: 1
+          maxLength: 255
+          example: Checkout nightly
+        description:
+          type: string
+          description: Purpose of the test plan.
+          example: Nightly checkout validation
+        executionMode:
+          type: string
+          description: Execution mode for plan items.
+          enum: [SEQUENTIAL]
           example: SEQUENTIAL
         timeoutSeconds:
           type: integer

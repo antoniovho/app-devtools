@@ -12,7 +12,7 @@ post:
     content:
       application/json:
         schema:
-          $ref: ../../components/authoring/components.yml#/components/schemas/CreateTestCaseRequest
+          $ref: ../../components/authoring/components.yml#/components/schemas/CreateTestCaseVersionRequest
   responses:
     "201":
       description: Created

@@ -358,6 +358,74 @@ components:
           additionalProperties: true
           example:
             team: payments
+    CreateTestCaseVersionRequest:
+      title: CreateTestCaseVersionRequest
+      description: Payload used to create the next immutable version of the test case selected in the path. Its test key is inherited from that source version.
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - summary
+        - objective
+        - testType
+        - testLevel
+        - priority
+        - definition
+        - timeoutSeconds
+      properties:
+        name:
+          type: string
+          description: Human-readable test case name.
+          minLength: 1
+          maxLength: 255
+          example: Checkout happy path
+        summary:
+          type: string
+          description: Short summary of the scenario.
+          minLength: 1
+          maxLength: 1000
+          example: Customer completes checkout
+        objective:
+          type: string
+          description: Expected objective of the test.
+          minLength: 1
+          maxLength: 2000
+          example: Verify order creation
+        testType:
+          type: string
+          description: Test execution modality.
+          enum: [AUTOMATED, MANUAL]
+          example: AUTOMATED
+        testLevel:
+          type: string
+          description: Test level in the quality model.
+          enum: [FUNCTIONAL, ERROR, INTEGRATION, PERFORMANCE, SECURITY, STRESS]
+          example: FUNCTIONAL
+        priority:
+          type: string
+          description: Business priority of the test.
+          enum: [LOW, MEDIUM, HIGH, CRITICAL]
+          example: HIGH
+        definition:
+          $ref: '#/components/schemas/Definition'
+        preconditions:
+          type: array
+          description: Ordered immutable precondition versions required before test case execution.
+          items:
+            $ref: '#/components/schemas/PreconditionVersionReference'
+          default: []
+          example: []
+        timeoutSeconds:
+          type: integer
+          description: Maximum execution time in seconds.
+          minimum: 1
+          example: 60
+        metadata:
+          type: object
+          description: Additional domain metadata.
+          additionalProperties: true
+          example:
+            team: payments
     TestCaseListResponse:
       title: TestCaseListResponse
       description: Paginated collection of test case versions.
@@ -483,6 +551,34 @@ components:
           minLength: 1
           maxLength: 100
           example: customer-is-authenticated
+        name:
+          type: string
+          description: Human-readable precondition name.
+          minLength: 1
+          maxLength: 255
+          example: Customer is authenticated
+        description:
+          type: string
+          description: Behavior validated before execution.
+          example: Checks that the customer session is valid
+        validationDefinition:
+          $ref: '#/components/schemas/Definition'
+        metadata:
+          type: object
+          description: Additional domain metadata.
+          additionalProperties: true
+          example:
+            team: payments
+    CreatePreconditionVersionRequest:
+      title: CreatePreconditionVersionRequest
+      description: Payload used to create the next immutable version of the precondition selected in the path. Its precondition key is inherited from that source version.
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - description
+        - validationDefinition
+      properties:
         name:
           type: string
           description: Human-readable precondition name.

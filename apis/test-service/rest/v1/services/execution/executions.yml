@@ -8,6 +8,7 @@ get:
     - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
     - $ref: ../../components/common/components.yml#/components/parameters/offset
     - $ref: ../../components/common/components.yml#/components/parameters/limit
+    - $ref: ../../components/execution/components.yml#/components/parameters/ExecutionStatusFilter
     - $ref: ../../components/execution/components.yml#/components/parameters/ExecutionOutcomeSortBy
     - $ref: ../../components/common/components.yml#/components/parameters/order
   responses:

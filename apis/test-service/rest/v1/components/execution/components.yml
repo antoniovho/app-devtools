@@ -34,6 +34,12 @@ components:
       description: Field used to sort the result set. Shared by executions, test results, and action results, which expose the same sortable fields.
       schema:
         $ref: '#/components/schemas/ExecutionOutcomeSortBy'
+    ExecutionStatusFilter:
+      name: status
+      in: query
+      description: Filter executions by current status. When omitted, executions in all states are returned.
+      schema:
+        $ref: '#/components/schemas/ExecutionStatus'
     TestResultArtifactSortBy:
       name: sortBy
       in: query
@@ -62,6 +68,19 @@ components:
         - createdAt
       default: createdAt
       example: createdAt
+    ExecutionStatus:
+      title: ExecutionStatus
+      description: Current execution status.
+      type: string
+      enum:
+        - CREATED
+        - RUNNING
+        - PASSED
+        - FAILED
+        - PARTIALLY_FAILED
+        - CANCELLED
+        - ERROR
+      example: RUNNING
     TestResultArtifactSortBy:
       title: TestResultArtifactSortBy
       description: Field used to sort the result set.
@@ -221,17 +240,7 @@ components:
           maxLength: 255
           example: github-actions
         status:
-          type: string
-          description: Current execution status.
-          enum:
-            - CREATED
-            - RUNNING
-            - PASSED
-            - FAILED
-            - PARTIALLY_FAILED
-            - CANCELLED
-            - ERROR
-          example: RUNNING
+          $ref: '#/components/schemas/ExecutionStatus'
         runnerIdentifier:
           type: string
           description: Stable identifier of the runner accepted when the execution was scheduled.

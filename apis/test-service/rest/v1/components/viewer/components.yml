@@ -157,14 +157,15 @@ components:
       description: >
         Read-only synchronization state between a logical domain entity and
         its stable representation in the external viewer. For versioned
-        entities, projectedVersionId identifies the immutable domain version
-        currently projected to the viewer.
+        entities, entityVersion and projectedVersionId identify the immutable
+        domain version currently projected to the viewer.
       type: object
       additionalProperties: false
       required:
         - id
         - entityType
         - entityKey
+        - entityVersion
         - projectedVersionId
         - viewerType
         - externalEntityKey
@@ -193,6 +194,11 @@ components:
           minLength: 1
           maxLength: 100
           example: checkout-happy-path
+        entityVersion:
+          type: integer
+          minimum: 1
+          description: Immutable business version of the entity represented in the external viewer.
+          example: 2
         projectedVersionId:
           description: >
             UUID of the immutable domain version currently projected to the
@@ -206,9 +212,8 @@ components:
         externalEntityKey:
           type: string
           description: >
-            Stable identifier of the projected entity in the external viewer.
-            Publishing a new domain version updates the same external entity instead
-            of creating a new one.
+            Stable identifier of the immutable projected entity in the external viewer.
+            Each entity version is synchronized independently.
           minLength: 1
           maxLength: 255
           example: TEST-123

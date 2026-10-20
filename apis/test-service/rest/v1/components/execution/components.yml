@@ -28,12 +28,24 @@ components:
       description: Field used to sort the result set.
       schema:
         $ref: '#/components/schemas/EnvironmentSortBy'
+    EnvironmentStatusFilter:
+      name: status
+      in: query
+      description: Filter environments by lifecycle status. When omitted, environments in all states are returned.
+      schema:
+        $ref: '#/components/schemas/EnvironmentStatus'
     ExecutionOutcomeSortBy:
       name: sortBy
       in: query
       description: Field used to sort the result set. Shared by executions, test results, and action results, which expose the same sortable fields.
       schema:
         $ref: '#/components/schemas/ExecutionOutcomeSortBy'
+    ExecutionStatusFilter:
+      name: status
+      in: query
+      description: Filter executions by current status. When omitted, executions in all states are returned.
+      schema:
+        $ref: '#/components/schemas/ExecutionStatus'
     TestResultArtifactSortBy:
       name: sortBy
       in: query
@@ -41,6 +53,14 @@ components:
       schema:
         $ref: '#/components/schemas/TestResultArtifactSortBy'
   schemas:
+    EnvironmentStatus:
+      title: EnvironmentStatus
+      description: Lifecycle status of an environment.
+      type: string
+      enum:
+        - ACTIVE
+        - INACTIVE
+      example: ACTIVE
     EnvironmentSortBy:
       title: EnvironmentSortBy
       description: Field used to sort the result set.
@@ -62,6 +82,19 @@ components:
         - createdAt
       default: createdAt
       example: createdAt
+    ExecutionStatus:
+      title: ExecutionStatus
+      description: Current execution status.
+      type: string
+      enum:
+        - CREATED
+        - RUNNING
+        - PASSED
+        - FAILED
+        - PARTIALLY_FAILED
+        - CANCELLED
+        - ERROR
+      example: RUNNING
     TestResultArtifactSortBy:
       title: TestResultArtifactSortBy
       description: Field used to sort the result set.
@@ -103,13 +136,7 @@ components:
           description: Purpose of the environment.
           example: Shared staging environment
         status:
-          type: string
-          description: Lifecycle status of the environment.
-          enum:
-            - ACTIVE
-            - INACTIVE
-            - DEPRECATED
-          example: ACTIVE
+          $ref: '#/components/schemas/EnvironmentStatus'
         configuration:
           type: object
           description: Environment-specific runtime configuration.
@@ -221,17 +248,7 @@ components:
           maxLength: 255
           example: github-actions
         status:
-          type: string
-          description: Current execution status.
-          enum:
-            - CREATED
-            - RUNNING
-            - PASSED
-            - FAILED
-            - PARTIALLY_FAILED
-            - CANCELLED
-            - ERROR
-          example: RUNNING
+          $ref: '#/components/schemas/ExecutionStatus'
         runnerIdentifier:
           type: string
           description: Stable identifier of the runner accepted when the execution was scheduled.

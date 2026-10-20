@@ -9,6 +9,14 @@ components:
       schema:
         $ref: "#/components/schemas/ViewerType"
       example: XRAY
+    RequiredViewerType:
+      name: viewerType
+      in: query
+      required: true
+      description: External viewer integration that receives the requested operation.
+      schema:
+        $ref: "#/components/schemas/ViewerType"
+      example: XRAY
     DriftEventSortBy:
       name: sortBy
       in: query
@@ -84,8 +92,8 @@ components:
       description: >
         Public, asynchronous request to publish a project projection or check it
         for drift. This resource exposes only safe operation progress and
-        aggregate counters; provider payloads, projection fingerprints, external
-        identifiers, and internal errors are never exposed here.
+        aggregate counters and safe error summaries; provider payloads,
+        projection fingerprints and credentials are never exposed here.
       type: object
       additionalProperties: false
       required:
@@ -135,7 +143,7 @@ components:
           minimum: 0
         error:
           type: string
-          description: Safe functional error summary, when available.
+          description: Safe aggregate failure summary, when available.
           maxLength: 1000
     ViewerOperationListResponse:
       title: ViewerOperationListResponse
@@ -223,6 +231,10 @@ components:
           minLength: 1
           maxLength: 255
           example: "123456"
+        error:
+          type: string
+          description: Safe failure summary for the latest synchronization attempt.
+          maxLength: 1000
         syncStatus:
           type: string
           description: Current synchronization status of the viewer projection.

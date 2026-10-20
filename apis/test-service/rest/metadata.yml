@@ -6,7 +6,7 @@ api:
     - execution
     - viewer-integration
   status: experimental
-  version: 0.4.6
+  version: 0.5.0
   type: application
   visibility: PUBLIC
   definition: openapi-rest.yml

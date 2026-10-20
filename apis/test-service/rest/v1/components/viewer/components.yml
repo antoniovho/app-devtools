@@ -35,6 +35,12 @@ components:
       description: Field used to sort asynchronous Viewer operations.
       schema:
         $ref: '#/components/schemas/ViewerOperationSortBy'
+    ViewerOperationItemSortBy:
+      name: sortBy
+      in: query
+      description: Field used to sort immutable per-entity operation outcomes.
+      schema:
+        $ref: '#/components/schemas/ViewerOperationItemSortBy'
   schemas:
     DriftEventSortBy:
       title: DriftEventSortBy
@@ -68,6 +74,16 @@ components:
         - createdAt
         - startedAt
         - finishedAt
+      default: createdAt
+      example: createdAt
+    ViewerOperationItemSortBy:
+      title: ViewerOperationItemSortBy
+      description: Field used to sort immutable per-entity operation outcomes.
+      type: string
+      enum:
+        - entityKey
+        - syncStatus
+        - createdAt
       default: createdAt
       example: createdAt
     ViewerType:
@@ -158,6 +174,78 @@ components:
           maxItems: 100
           items:
             $ref: "#/components/schemas/ViewerOperation"
+        pagination:
+          $ref: ../common/components.yml#/components/schemas/Pagination
+    ViewerOperationItem:
+      title: ViewerOperationItem
+      description: >
+        Immutable outcome for one entity version attempted by an asynchronous
+        Viewer operation. This is historical evidence and is never replaced by
+        a later publication of the same entity.
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - operationId
+        - syncRecordId
+        - entityType
+        - entityKey
+        - entityVersion
+        - projectedVersionId
+        - viewerType
+        - externalEntityKey
+        - syncStatus
+        - createdAt
+      properties:
+        id:
+          $ref: ../common/components.yml#/components/schemas/UUID
+        operationId:
+          $ref: ../common/components.yml#/components/schemas/UUID
+        syncRecordId:
+          $ref: ../common/components.yml#/components/schemas/UUID
+        entityType:
+          type: string
+          enum: [TEST_CASE, PRECONDITION, TEST_SET, TEST_PLAN]
+        entityKey:
+          type: string
+          minLength: 1
+          maxLength: 100
+        entityVersion:
+          type: integer
+          minimum: 1
+        projectedVersionId:
+          $ref: ../common/components.yml#/components/schemas/UUID
+        viewerType:
+          $ref: '#/components/schemas/ViewerType'
+        externalEntityKey:
+          type: string
+          minLength: 1
+          maxLength: 255
+        externalEntityId:
+          type: string
+          minLength: 1
+          maxLength: 255
+        syncStatus:
+          type: string
+          enum: [PENDING, SYNCED, ERROR, DRIFT_DETECTED]
+        error:
+          type: string
+          description: Safe failure summary for this exact operation attempt.
+          maxLength: 1000
+        createdAt:
+          type: string
+          format: date-time
+    ViewerOperationItemListResponse:
+      title: ViewerOperationItemListResponse
+      type: object
+      additionalProperties: false
+      required: [data, pagination]
+      properties:
+        data:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/ViewerOperationItem'
         pagination:
           $ref: ../common/components.yml#/components/schemas/Pagination
     ViewerSyncRecord:

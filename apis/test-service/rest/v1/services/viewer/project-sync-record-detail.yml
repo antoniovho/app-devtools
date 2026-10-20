@@ -1,0 +1,32 @@
+get:
+  operationId: getProjectViewerSyncRecord
+  tags:
+    - Viewer Integration
+  summary: Get current Viewer synchronization state
+  description: >
+    Retrieves the current synchronization state of one immutable entity version
+    in the external viewer. For a past attempt, use the operation items endpoint.
+  parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
+    - name: syncRecordId
+      in: path
+      required: true
+      schema:
+        $ref: ../../components/common/components.yml#/components/schemas/UUID
+  responses:
+    "200":
+      description: Current Viewer synchronization record
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/viewer/components.yml#/components/schemas/ViewerSyncRecord
+    "400":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/BadRequest400
+    "401":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    "403":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Forbidden403
+    "404":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
+    "500":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500

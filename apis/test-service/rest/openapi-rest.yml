@@ -112,12 +112,16 @@ paths:
     $ref: v1/services/viewer/drift-checks.yml
   /v1/projects/{projectKey}/viewer/sync-records:
     $ref: v1/services/viewer/project-sync-records.yml
+  /v1/projects/{projectKey}/viewer/sync-records/{syncRecordId}:
+    $ref: v1/services/viewer/project-sync-record-detail.yml
   /v1/projects/{projectKey}/viewer/drift-events:
     $ref: v1/services/viewer/project-drift-events.yml
   /v1/projects/{projectKey}/viewer/operations:
     $ref: v1/services/viewer/project-operations.yml
   /v1/projects/{projectKey}/viewer/operations/{viewerOperationId}:
     $ref: v1/services/viewer/project-operation-detail.yml
+  /v1/projects/{projectKey}/viewer/operations/{viewerOperationId}/items:
+    $ref: v1/services/viewer/project-operation-items.yml
   /v1/viewer/sync-records:
     $ref: v1/services/viewer/sync-records.yml
   /v1/viewer/drift-events:

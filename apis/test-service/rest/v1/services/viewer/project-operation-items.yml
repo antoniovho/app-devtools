@@ -1,0 +1,36 @@
+get:
+  operationId: listProjectViewerOperationItems
+  tags:
+    - Viewer Integration
+  summary: List immutable outcomes of a Viewer operation
+  description: >
+    Returns the per-entity historical outcomes of one Viewer operation. Results
+    remain available after later publications update the current sync record.
+  parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/projectKeyPath
+    - name: viewerOperationId
+      in: path
+      required: true
+      schema:
+        $ref: ../../components/common/components.yml#/components/schemas/UUID
+    - $ref: ../../components/common/components.yml#/components/parameters/offset
+    - $ref: ../../components/common/components.yml#/components/parameters/limit
+    - $ref: ../../components/viewer/components.yml#/components/parameters/ViewerOperationItemSortBy
+    - $ref: ../../components/common/components.yml#/components/parameters/order
+  responses:
+    "200":
+      description: Immutable operation outcomes
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/viewer/components.yml#/components/schemas/ViewerOperationItemListResponse
+    "400":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/BadRequest400
+    "401":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    "403":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Forbidden403
+    "404":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
+    "500":
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500

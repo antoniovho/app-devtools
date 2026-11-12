@@ -1,0 +1,80 @@
+components:
+  parameters:
+    EvaluationId:
+      name: evaluationId
+      in: path
+      required: true
+      description: UUID of the evaluation.
+      schema:
+        $ref: '#/components/schemas/UUID'
+    CaseId:
+      name: caseId
+      in: path
+      required: true
+      description: UUID of the evaluation case.
+      schema:
+        $ref: '#/components/schemas/UUID'
+    RunId:
+      name: runId
+      in: path
+      required: true
+      description: UUID of the evaluation run.
+      schema:
+        $ref: '#/components/schemas/UUID'
+    Offset:
+      name: offset
+      in: query
+      description: Number of records to skip.
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+    Limit:
+      name: limit
+      in: query
+      description: Maximum records to return.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    Order:
+      name: order
+      in: query
+      description: Direction applied to the selected sort field.
+      schema:
+        $ref: '#/components/schemas/SortOrder'
+  schemas:
+    TraceStepKind:
+      title: TraceStepKind
+      description: Normalized kind of an execution trace step shared by trajectory definitions and runs.
+      type: string
+      enum: [MODEL, TOOL, AGENT]
+    SortOrder:
+      title: SortOrder
+      description: Direction applied to a collection's selected sort field.
+      type: string
+      enum: [ASC, DESC]
+      default: DESC
+      example: DESC
+    UUID:
+      type: string
+      format: uuid
+    Pagination:
+      type: object
+      additionalProperties: false
+      required:
+        - offset
+        - limit
+        - total
+      properties:
+        offset:
+          type: integer
+          minimum: 0
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 100
+        total:
+          type: integer
+          minimum: 0

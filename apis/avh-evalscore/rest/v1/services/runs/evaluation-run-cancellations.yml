@@ -1,0 +1,22 @@
+post:
+  operationId: cancelEvaluationRun
+  tags: [Evaluation Runs]
+  summary: Cancel an evaluation run
+  description: Requests cancellation of a run that has not reached a terminal state.
+  parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/RunId
+  responses:
+    '200':
+      description: Evaluation run cancelled
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/runs/components.yml#/components/schemas/EvaluationRun
+    '401':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    '404':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
+    '409':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Conflict409
+    '500':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500

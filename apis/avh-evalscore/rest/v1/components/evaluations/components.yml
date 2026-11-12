@@ -1,0 +1,429 @@
+components:
+  schemas:
+    EvaluationCaseKind:
+      type: string
+      enum: [SINGLE_TURN, MULTI_TURN, TRAJECTORY]
+    TargetKind:
+      type: string
+      enum: [LITELLM, HTTP]
+    EvaluationSortBy:
+      title: EvaluationSortBy
+      description: Field used to order evaluation suites.
+      type: string
+      enum: [NAME, CREATED_AT, UPDATED_AT]
+      default: CREATED_AT
+      example: CREATED_AT
+    EvaluationCaseSortBy:
+      title: EvaluationCaseSortBy
+      description: Field used to order evaluation cases.
+      type: string
+      enum: [CREATED_AT, UPDATED_AT]
+      default: CREATED_AT
+      example: CREATED_AT
+    EvaluationNameFilter:
+      title: EvaluationNameFilter
+      description: Case-insensitive partial match for an evaluation suite name.
+      type: string
+      minLength: 1
+      maxLength: 255
+    TrajectoryStepExpectation:
+      type: object
+      additionalProperties: false
+      required: [kind, name]
+      properties:
+        kind:
+          $ref: ../common/components.yml#/components/schemas/TraceStepKind
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+    TrajectoryExpectation:
+      type: object
+      additionalProperties: false
+      anyOf:
+        - required: [expectedSteps]
+          properties:
+            expectedSteps:
+              minItems: 1
+        - required: [forbiddenSteps]
+          properties:
+            forbiddenSteps:
+              minItems: 1
+      properties:
+        expectedSteps:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/TrajectoryStepExpectation'
+        forbiddenSteps:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/TrajectoryStepExpectation'
+        strictOrder:
+          type: boolean
+          default: true
+    Message:
+      type: object
+      additionalProperties: false
+      required: [role, content]
+      properties:
+        role:
+          type: string
+          enum: [system, user, assistant, tool]
+        content:
+          type: string
+          minLength: 1
+          maxLength: 50000
+    LiteLLMTarget:
+      type: object
+      additionalProperties: false
+      required: [kind, profile, model]
+      properties:
+        kind:
+          type: string
+          enum: [LITELLM]
+        profile:
+          type: string
+          minLength: 1
+          maxLength: 100
+        model:
+          type: string
+          minLength: 1
+          maxLength: 255
+    HttpTarget:
+      type: object
+      additionalProperties: false
+      required: [kind, profile]
+      properties:
+        kind:
+          type: string
+          enum: [HTTP]
+        profile:
+          type: string
+          minLength: 1
+          maxLength: 100
+    TargetConfiguration:
+      oneOf:
+        - $ref: '#/components/schemas/LiteLLMTarget'
+        - $ref: '#/components/schemas/HttpTarget'
+      discriminator:
+        propertyName: kind
+        mapping:
+          LITELLM: '#/components/schemas/LiteLLMTarget'
+          HTTP: '#/components/schemas/HttpTarget'
+    EvaluatorConfiguration:
+      type: object
+      additionalProperties: false
+      required: [profile, model, metric, criteria, threshold]
+      properties:
+        profile:
+          type: string
+          minLength: 1
+          maxLength: 100
+        model:
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: LiteLLM provider/model identifier used by DeepEval, for example openai/gpt-4.1-mini.
+        metric:
+          type: string
+          description: The DeepEval metric implemented by this API version.
+          enum: [G_EVAL]
+        criteria:
+          type: string
+          minLength: 1
+          maxLength: 10000
+        threshold:
+          type: number
+          minimum: 0
+          maximum: 1
+    Evaluation:
+      type: object
+      additionalProperties: false
+      required: [id, name, target, evaluator, repetitions, concurrency, createdAt, updatedAt]
+      properties:
+        id:
+          $ref: ../common/components.yml#/components/schemas/UUID
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 5000
+          nullable: true
+        target:
+          $ref: '#/components/schemas/TargetConfiguration'
+        evaluator:
+          $ref: '#/components/schemas/EvaluatorConfiguration'
+        repetitions:
+          type: integer
+          minimum: 1
+          maximum: 100
+        concurrency:
+          type: integer
+          minimum: 1
+          maximum: 20
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    CreateEvaluationRequest:
+      type: object
+      additionalProperties: false
+      required: [name, target, evaluator]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 5000
+          nullable: true
+        target:
+          $ref: '#/components/schemas/TargetConfiguration'
+        evaluator:
+          $ref: '#/components/schemas/EvaluatorConfiguration'
+        repetitions:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 1
+        concurrency:
+          type: integer
+          minimum: 1
+          maximum: 20
+          default: 1
+    UpdateEvaluationRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 5000
+          nullable: true
+        target:
+          $ref: '#/components/schemas/TargetConfiguration'
+        evaluator:
+          $ref: '#/components/schemas/EvaluatorConfiguration'
+        repetitions:
+          type: integer
+          minimum: 1
+          maximum: 100
+        concurrency:
+          type: integer
+          minimum: 1
+          maximum: 20
+    SingleTurnEvaluationCase:
+      type: object
+      additionalProperties: false
+      required: [id, kind, input, expectedOutput, createdAt, updatedAt]
+      properties:
+        id:
+          $ref: ../common/components.yml#/components/schemas/UUID
+        kind:
+          type: string
+          enum: [SINGLE_TURN]
+        input:
+          type: string
+          minLength: 1
+          maxLength: 50000
+        expectedOutput:
+          type: string
+          maxLength: 50000
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    MultiTurnEvaluationCase:
+      type: object
+      additionalProperties: false
+      required: [id, kind, messages, expectedOutput, createdAt, updatedAt]
+      properties:
+        id:
+          $ref: ../common/components.yml#/components/schemas/UUID
+        kind:
+          type: string
+          enum: [MULTI_TURN]
+        messages:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/Message'
+        expectedOutput:
+          type: string
+          maxLength: 50000
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    TrajectoryEvaluationCase:
+      type: object
+      additionalProperties: false
+      required: [id, kind, input, expectedOutput, trajectory, createdAt, updatedAt]
+      properties:
+        id:
+          $ref: ../common/components.yml#/components/schemas/UUID
+        kind:
+          type: string
+          enum: [TRAJECTORY]
+        input:
+          type: string
+          minLength: 1
+          maxLength: 50000
+        expectedOutput:
+          type: string
+          maxLength: 50000
+          nullable: true
+        trajectory:
+          $ref: '#/components/schemas/TrajectoryExpectation'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    EvaluationCase:
+      oneOf:
+        - $ref: '#/components/schemas/SingleTurnEvaluationCase'
+        - $ref: '#/components/schemas/MultiTurnEvaluationCase'
+        - $ref: '#/components/schemas/TrajectoryEvaluationCase'
+      discriminator:
+        propertyName: kind
+        mapping:
+          SINGLE_TURN: '#/components/schemas/SingleTurnEvaluationCase'
+          MULTI_TURN: '#/components/schemas/MultiTurnEvaluationCase'
+          TRAJECTORY: '#/components/schemas/TrajectoryEvaluationCase'
+    CreateEvaluationCaseRequest:
+      oneOf:
+        - $ref: '#/components/schemas/CreateSingleTurnEvaluationCaseRequest'
+        - $ref: '#/components/schemas/CreateMultiTurnEvaluationCaseRequest'
+        - $ref: '#/components/schemas/CreateTrajectoryEvaluationCaseRequest'
+      discriminator:
+        propertyName: kind
+        mapping:
+          SINGLE_TURN: '#/components/schemas/CreateSingleTurnEvaluationCaseRequest'
+          MULTI_TURN: '#/components/schemas/CreateMultiTurnEvaluationCaseRequest'
+          TRAJECTORY: '#/components/schemas/CreateTrajectoryEvaluationCaseRequest'
+    CreateSingleTurnEvaluationCaseRequest:
+      type: object
+      additionalProperties: false
+      required: [kind, input]
+      properties:
+        kind:
+          type: string
+          enum: [SINGLE_TURN]
+        input:
+          type: string
+          minLength: 1
+          maxLength: 50000
+        expectedOutput:
+          type: string
+          maxLength: 50000
+          nullable: true
+    CreateMultiTurnEvaluationCaseRequest:
+      type: object
+      additionalProperties: false
+      required: [kind, messages]
+      properties:
+        kind:
+          type: string
+          enum: [MULTI_TURN]
+        messages:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/Message'
+        expectedOutput:
+          type: string
+          maxLength: 50000
+          nullable: true
+    CreateTrajectoryEvaluationCaseRequest:
+      type: object
+      additionalProperties: false
+      required: [kind, input, trajectory]
+      properties:
+        kind:
+          type: string
+          enum: [TRAJECTORY]
+        input:
+          type: string
+          minLength: 1
+          maxLength: 50000
+        expectedOutput:
+          type: string
+          maxLength: 50000
+          nullable: true
+        trajectory:
+          $ref: '#/components/schemas/TrajectoryExpectation'
+    EvaluationListResponse:
+      type: object
+      additionalProperties: false
+      required: [data, pagination]
+      properties:
+        data:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/Evaluation'
+        pagination:
+          $ref: ../common/components.yml#/components/schemas/Pagination
+    EvaluationCaseListResponse:
+      type: object
+      additionalProperties: false
+      required: [data, pagination]
+      properties:
+        data:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/EvaluationCase'
+        pagination:
+          $ref: ../common/components.yml#/components/schemas/Pagination
+  parameters:
+    EvaluationSortBy:
+      name: sortBy
+      in: query
+      description: Field used to order evaluation suites.
+      schema:
+        $ref: '#/components/schemas/EvaluationSortBy'
+    EvaluationName:
+      name: name
+      in: query
+      description: Case-insensitive partial match on the evaluation name.
+      schema:
+        $ref: '#/components/schemas/EvaluationNameFilter'
+    TargetKindFilter:
+      name: targetKind
+      in: query
+      description: Return only evaluations with this target kind.
+      schema:
+        $ref: '#/components/schemas/TargetKind'
+    EvaluationCaseSortBy:
+      name: sortBy
+      in: query
+      description: Field used to order evaluation cases.
+      schema:
+        $ref: '#/components/schemas/EvaluationCaseSortBy'
+    EvaluationCaseKindFilter:
+      name: kind
+      in: query
+      description: Return only cases of this kind.
+      schema:
+        $ref: '#/components/schemas/EvaluationCaseKind'

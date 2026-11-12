@@ -1,6 +1,8 @@
 apis:
   test-service:
     root: ./apis/test-service/rest/openapi-rest.yml
+  avh-evalscore:
+    root: ./apis/avh-evalscore/rest/openapi-rest.yml
 
 extends:
   - recommended

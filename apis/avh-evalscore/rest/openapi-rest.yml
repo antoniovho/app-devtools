@@ -1,0 +1,45 @@
+---
+openapi: 3.0.3
+info:
+  title: AVH Evalscore
+  description: API for authoring and executing reproducible LLM evaluations.
+  version: 0.1.0
+  contact:
+    name: Antonio Velasco Horcajada
+    email: avelasco.horcajada@knowmadmood.com
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+tags:
+  - name: Evaluations
+    description: Evaluation suite and case authoring.
+  - name: Evaluation Runs
+    description: Asynchronous evaluation execution and immutable results.
+paths:
+  /v1/evaluations:
+    $ref: v1/services/evaluations/evaluations.yml
+  /v1/evaluations/{evaluationId}:
+    $ref: v1/services/evaluations/evaluation-detail.yml
+  /v1/evaluations/{evaluationId}/cases:
+    $ref: v1/services/evaluations/evaluation-cases.yml
+  /v1/evaluations/{evaluationId}/cases/{caseId}:
+    $ref: v1/services/evaluations/evaluation-case-detail.yml
+  /v1/evaluations/{evaluationId}/cases/{caseId}/runs:
+    $ref: v1/services/runs/evaluation-case-runs.yml
+  /v1/evaluations/{evaluationId}/runs:
+    $ref: v1/services/runs/evaluation-runs.yml
+  /v1/evaluation-runs/{runId}:
+    $ref: v1/services/runs/evaluation-run-detail.yml
+  /v1/evaluation-runs/{runId}/results:
+    $ref: v1/services/runs/evaluation-run-results.yml
+  /v1/evaluation-runs/{runId}/cancellations:
+    $ref: v1/services/runs/evaluation-run-cancellations.yml
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Authentication using an OpenID Connect access token.
+security:
+  - bearerAuth: []

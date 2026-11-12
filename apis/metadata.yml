@@ -7,3 +7,7 @@ apis:
     name: "Test Service"
     api-spec-type: rest
     definition-path: "test-service/rest"
+  - id: avh-evalscore
+    name: "AVH Evalscore"
+    api-spec-type: rest
+    definition-path: "avh-evalscore/rest"

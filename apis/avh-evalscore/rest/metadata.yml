@@ -1,0 +1,11 @@
+api:
+  name: AVH Evalscore
+  tags:
+    - evaluations
+    - evaluation-runs
+  status: experimental
+  version: 0.1.0
+  type: application
+  visibility: PUBLIC
+  definition: openapi-rest.yml
+  scope: public

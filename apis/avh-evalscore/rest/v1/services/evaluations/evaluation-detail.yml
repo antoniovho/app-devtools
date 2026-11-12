@@ -1,0 +1,52 @@
+get:
+  operationId: getEvaluation
+  tags: [Evaluations]
+  summary: Get an evaluation
+  description: Returns the current configuration of the requested evaluation definition.
+  parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/EvaluationId
+  responses:
+    '200':
+      description: Evaluation
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/evaluations/components.yml#/components/schemas/Evaluation
+    '401':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    '404':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
+    '422':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
+    '500':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500
+patch:
+  operationId: updateEvaluation
+  tags: [Evaluations]
+  summary: Update an evaluation
+  description: Applies a partial update to an evaluation definition without changing its identity.
+  parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/EvaluationId
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../components/evaluations/components.yml#/components/schemas/UpdateEvaluationRequest
+  responses:
+    '200':
+      description: Evaluation updated
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/evaluations/components.yml#/components/schemas/Evaluation
+    '400':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/BadRequest400
+    '401':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    '404':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
+    '422':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
+    '500':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500

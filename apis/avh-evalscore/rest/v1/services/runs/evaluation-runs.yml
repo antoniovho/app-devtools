@@ -1,0 +1,55 @@
+get:
+  operationId: listEvaluationRuns
+  tags: [Evaluation Runs]
+  summary: List evaluation runs
+  description: Returns a paginated list of historical and active runs for an evaluation.
+  parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/EvaluationId
+    - $ref: ../../components/common/components.yml#/components/parameters/Offset
+    - $ref: ../../components/common/components.yml#/components/parameters/Limit
+    - $ref: ../../components/common/components.yml#/components/parameters/Order
+    - $ref: ../../components/runs/components.yml#/components/parameters/EvaluationRunSortBy
+    - $ref: ../../components/runs/components.yml#/components/parameters/EvaluationRunStatusFilter
+  responses:
+    '200':
+      description: Evaluation runs
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/runs/components.yml#/components/schemas/EvaluationRunListResponse
+    '401':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    '404':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
+    '422':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
+    '500':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500
+post:
+  operationId: scheduleEvaluationRun
+  tags: [Evaluation Runs]
+  summary: Schedule an evaluation run
+  description: Captures the current evaluation definition and schedules it for asynchronous processing.
+  parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/EvaluationId
+  responses:
+    '202':
+      description: Evaluation run accepted
+      headers:
+        Location:
+          required: true
+          schema:
+            type: string
+            format: uri-reference
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/runs/components.yml#/components/schemas/EvaluationRun
+    '401':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    '404':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
+    '422':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
+    '500':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500

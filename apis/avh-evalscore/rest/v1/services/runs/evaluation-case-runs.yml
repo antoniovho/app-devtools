@@ -1,0 +1,61 @@
+get:
+  operationId: listEvaluationCaseRuns
+  tags: [Evaluation Runs]
+  summary: List evaluation case runs
+  description: Returns a paginated history of runs whose immutable snapshot contains the case.
+  parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/EvaluationId
+    - $ref: ../../components/common/components.yml#/components/parameters/CaseId
+    - $ref: ../../components/common/components.yml#/components/parameters/Offset
+    - $ref: ../../components/common/components.yml#/components/parameters/Limit
+    - $ref: ../../components/common/components.yml#/components/parameters/Order
+    - $ref: ../../components/runs/components.yml#/components/parameters/EvaluationRunSortBy
+    - $ref: ../../components/runs/components.yml#/components/parameters/EvaluationRunStatusFilter
+  responses:
+    '200':
+      description: Evaluation case runs
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/runs/components.yml#/components/schemas/EvaluationRunListResponse
+    '401':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    '404':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
+    '422':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
+    '500':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500
+
+post:
+  operationId: scheduleEvaluationCaseRun
+  tags: [Evaluation Runs]
+  summary: Schedule one evaluation case
+  description: >-
+    Captures the current evaluation configuration and the requested owned case,
+    then schedules its asynchronous execution. The resulting run contains a
+    single immutable case snapshot.
+  parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/EvaluationId
+    - $ref: ../../components/common/components.yml#/components/parameters/CaseId
+  responses:
+    '202':
+      description: Evaluation case run accepted
+      headers:
+        Location:
+          required: true
+          schema:
+            type: string
+            format: uri-reference
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/runs/components.yml#/components/schemas/EvaluationRun
+    '401':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    '404':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
+    '422':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
+    '500':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500

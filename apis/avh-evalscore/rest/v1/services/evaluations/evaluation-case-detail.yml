@@ -1,0 +1,54 @@
+get:
+  operationId: getEvaluationCase
+  tags: [Evaluations]
+  summary: Get an evaluation case
+  description: Returns one case from the requested evaluation definition.
+  parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/EvaluationId
+    - $ref: ../../components/common/components.yml#/components/parameters/CaseId
+  responses:
+    '200':
+      description: Evaluation case
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/evaluations/components.yml#/components/schemas/EvaluationCase
+    '401':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    '404':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
+    '422':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
+    '500':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500
+patch:
+  operationId: updateEvaluationCase
+  tags: [Evaluations]
+  summary: Update an evaluation case
+  description: Replaces the input and expectations of an existing case in an evaluation.
+  parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/EvaluationId
+    - $ref: ../../components/common/components.yml#/components/parameters/CaseId
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../components/evaluations/components.yml#/components/schemas/CreateEvaluationCaseRequest
+  responses:
+    '200':
+      description: Evaluation case updated
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/evaluations/components.yml#/components/schemas/EvaluationCase
+    '400':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/BadRequest400
+    '401':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    '404':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
+    '422':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
+    '500':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500

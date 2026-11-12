@@ -1,0 +1,30 @@
+get:
+  operationId: listEvaluationRunResults
+  tags: [Evaluation Runs]
+  summary: List immutable evaluation results
+  description: Returns a paginated list of result attempts produced by the requested run.
+  parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/RunId
+    - $ref: ../../components/common/components.yml#/components/parameters/Offset
+    - $ref: ../../components/common/components.yml#/components/parameters/Limit
+    - $ref: ../../components/common/components.yml#/components/parameters/Order
+    - $ref: ../../components/runs/components.yml#/components/parameters/EvaluationResultSortBy
+    - $ref: ../../components/runs/components.yml#/components/parameters/EvaluationResultPassedFilter
+    - $ref: ../../components/runs/components.yml#/components/parameters/EvaluationResultCaseIdFilter
+    - $ref: ../../components/runs/components.yml#/components/parameters/EvaluationResultMinScoreFilter
+    - $ref: ../../components/runs/components.yml#/components/parameters/EvaluationResultMaxScoreFilter
+  responses:
+    '200':
+      description: Evaluation results
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/runs/components.yml#/components/schemas/EvaluationResultListResponse
+    '401':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    '404':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
+    '422':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
+    '500':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500

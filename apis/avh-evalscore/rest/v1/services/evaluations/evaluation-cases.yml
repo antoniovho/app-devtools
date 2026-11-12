@@ -1,0 +1,63 @@
+get:
+  operationId: listEvaluationCases
+  tags: [Evaluations]
+  summary: List evaluation cases
+  description: Returns a paginated list of cases belonging to the requested evaluation.
+  parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/EvaluationId
+    - $ref: ../../components/common/components.yml#/components/parameters/Offset
+    - $ref: ../../components/common/components.yml#/components/parameters/Limit
+    - $ref: ../../components/common/components.yml#/components/parameters/Order
+    - $ref: ../../components/evaluations/components.yml#/components/parameters/EvaluationCaseSortBy
+    - $ref: ../../components/evaluations/components.yml#/components/parameters/EvaluationCaseKindFilter
+  responses:
+    '200':
+      description: Evaluation cases
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/evaluations/components.yml#/components/schemas/EvaluationCaseListResponse
+    '401':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    '404':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
+    '422':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
+    '500':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500
+post:
+  operationId: createEvaluationCase
+  tags: [Evaluations]
+  summary: Create an evaluation case
+  description: Adds a single-turn, multi-turn, or trajectory case to an evaluation definition.
+  parameters:
+    - $ref: ../../components/common/components.yml#/components/parameters/EvaluationId
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../components/evaluations/components.yml#/components/schemas/CreateEvaluationCaseRequest
+  responses:
+    '201':
+      description: Evaluation case created
+      headers:
+        Location:
+          required: true
+          schema:
+            type: string
+            format: uri-reference
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/evaluations/components.yml#/components/schemas/EvaluationCase
+    '400':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/BadRequest400
+    '401':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/Unauthorized401
+    '404':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/NotFound404
+    '422':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/UnprocessableEntity422
+    '500':
+      $ref: ../../../../../commons/rest/v1/components/errors.yml#/components/responses/InternalServerError500

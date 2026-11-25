@@ -179,6 +179,9 @@ components:
           maxLength: 50000
         trace:
           $ref: '#/components/schemas/EvaluationTrace'
+        judgeTrace:
+          description: Sanitized prompt and parsed response steps produced by the LLM-as-a-judge.
+          $ref: '#/components/schemas/EvaluationTrace'
         trajectory:
           $ref: '#/components/schemas/TrajectoryCheck'
         createdAt:

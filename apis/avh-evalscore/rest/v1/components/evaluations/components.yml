@@ -5,7 +5,7 @@ components:
       enum: [SINGLE_TURN, MULTI_TURN, TRAJECTORY]
     TargetKind:
       type: string
-      enum: [LITELLM, HTTP]
+      enum: [LITELLM, HTTP, AILLM_RUNTIME]
     EvaluationSortBy:
       title: EvaluationSortBy
       description: Field used to order evaluation suites.
@@ -97,19 +97,38 @@ components:
           type: string
           minLength: 1
           maxLength: 100
+    AillmRuntimeTarget:
+      type: object
+      additionalProperties: false
+      required: [kind, profile, model]
+      properties:
+        kind:
+          type: string
+          enum: [AILLM_RUNTIME]
+        profile:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Named runtime profile containing the gateway URL and virtual key.
+        model:
+          type: string
+          minLength: 1
+          maxLength: 255
     TargetConfiguration:
       oneOf:
         - $ref: '#/components/schemas/LiteLLMTarget'
         - $ref: '#/components/schemas/HttpTarget'
+        - $ref: '#/components/schemas/AillmRuntimeTarget'
       discriminator:
         propertyName: kind
         mapping:
           LITELLM: '#/components/schemas/LiteLLMTarget'
           HTTP: '#/components/schemas/HttpTarget'
+          AILLM_RUNTIME: '#/components/schemas/AillmRuntimeTarget'
     EvaluatorConfiguration:
       type: object
       additionalProperties: false
-      required: [profile, model, metric, criteria, threshold]
+      required: [profile, model, metric, threshold]
       properties:
         profile:
           type: string
@@ -122,12 +141,14 @@ components:
           description: LiteLLM provider/model identifier used by DeepEval, for example openai/gpt-4.1-mini.
         metric:
           type: string
-          description: The DeepEval metric implemented by this API version.
-          enum: [G_EVAL]
+          description: The DeepEval metric to apply. G_EVAL requires criteria; the other metrics use their built-in rubric.
+          enum: [G_EVAL, ANSWER_RELEVANCY, TOXICITY]
         criteria:
           type: string
           minLength: 1
           maxLength: 10000
+          nullable: true
+          description: Required only for the G_EVAL metric.
         threshold:
           type: number
           minimum: 0

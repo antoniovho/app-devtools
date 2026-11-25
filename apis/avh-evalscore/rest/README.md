@@ -12,7 +12,7 @@ to consumer repositories.
 
 - Root document: `openapi-rest.yml`
 - API metadata: `metadata.yml`
-- Current version: `0.1.1`
+- Current version: `0.1.2`
 - Base path: `/v1`
 - Local server: `http://localhost:8080`
 - Authentication: Bearer JWT (`bearerAuth`)
@@ -50,9 +50,9 @@ npx --yes @redocly/cli@1.34.20 lint apis/avh-evalscore/rest/openapi-rest.yml
 
 npx --yes @redocly/cli@1.34.20 bundle \
   apis/avh-evalscore/rest/openapi-rest.yml \
-  --output /tmp/avh-evalscore-api-0.1.1.yml
+  --output /tmp/avh-evalscore-api-0.1.2.yml
 
-openapi-generator-cli validate -i /tmp/avh-evalscore-api-0.1.1.yml
+openapi-generator-cli validate -i /tmp/avh-evalscore-api-0.1.2.yml
 ```
 
 The bundle is a single OpenAPI YAML document with resolved references. It is not

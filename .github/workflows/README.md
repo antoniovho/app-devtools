@@ -8,14 +8,14 @@
                            ▼
           apis/test-service/rest/metadata.yml
                            │
-                 version: 0.1.1
+                 version: 0.1.2
                  definition:
                    openapi-rest.yml
                            │
                            ▼
           apis/test-service/rest/openapi-rest.yml
                            │
-                 info.version: 0.1.1
+                 info.version: 0.1.2
                            │
                            ▼
                     Redocly lint
@@ -23,9 +23,9 @@
                     Redocly bundle
                            │
                            ▼
-              test-service-api-0.1.1.yml
+              test-service-api-0.1.2.yml
                            │
                            ▼
                  Git tag + Release
-              test-service-api-v0.1.1
+              test-service-api-v0.1.2
 ```

@@ -15,12 +15,12 @@ apis/test-service/rest/metadata.yml
         │
         │ api.version
         ▼
-     0.1.1
+     0.1.2
         │
         ├── OpenAPI info.version debe coincidir
-        ├── tag = test-service-api-v0.1.1
-        ├── release = test-service-api-v0.1.1
-        └── bundle = test-service-api-0.1.1.yml
+        ├── tag = test-service-api-v0.1.2
+        ├── release = test-service-api-v0.1.2
+        └── bundle = test-service-api-0.1.2.yml
 ```
 
 Para validación de PR, sí:
@@ -34,13 +34,13 @@ Pero para crear una nueva release, debe ser estrictamente:
 `metadata.version > última versión publicada`
 
 ```text
-Última release: 0.1.1
+Última release: 0.1.2
 
-metadata 0.1.1
+metadata 0.1.2
     ├── validate → OK
     └── release  → ERROR: ya existe
 
-metadata 0.1.1
+metadata 0.1.2
     ├── validate → OK
     └── release  → OK
 
